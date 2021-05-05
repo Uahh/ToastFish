@@ -15,16 +15,26 @@ namespace ToastFish.PushControl
             Select Query = new Select();
             List<Word> Result = Query.GetRandomWordList(number);
 
-            //foreach(var Word in Result)
-            //{
+            foreach (var CurrentWord in Result)
+            {
+                bool Cur = PushOneWord(CurrentWord);
+                break;
+            }
 
-            //}
+            //// 基本单词
+            //new ToastContentBuilder()
+            //    .AddText("cancel  ('kænsl')\nvt.取消，撤销；删去")
+            //    .AddText("they are more advanced than earlier models.\n它们比先前的型号更先进。")
+            //    .AddButton(new ToastButton()
+            //        .SetContent("Reply")
+            //        .AddArgument("action", "reply")
+            //        .SetBackgroundActivation())
 
-            // 基本单词
-            new ToastContentBuilder()
-                .AddText("cancel  ('kænsl')\nvt.取消，撤销；删去")
-                .AddText("They are called ‘Supertrams’, the implication being that (= which is meant to suggest that ) they are more advanced than earlier models.\n它们被称作“超级电车”，这是暗指它们比先前的型号更先进。")
-                .Show();
+            //    .AddButton(new ToastButton()
+            //        .SetContent("Like")
+            //        .AddArgument("action", "like")
+            //        .SetBackgroundActivation())
+            //    .Show();
 
             ////选择题
             //new ToastContentBuilder()
@@ -50,6 +60,37 @@ namespace ToastFish.PushControl
             //    .AddArgument("action", "like")
             //    .SetBackgroundActivation())
             //.Show();
+        }
+
+        public static bool PushOneWord(Word CurrentWord) 
+        {
+            bool Ans = false;
+            string WordPhonePosTran = CurrentWord.headWord + "  (" + CurrentWord.usPhone + ")\n" + CurrentWord.pos + ". " + CurrentWord.tranCN;
+            string SentenceTran = "";
+            if(CurrentWord.sentence != null && CurrentWord.sentence.Length < 50)
+            {
+                SentenceTran = CurrentWord.sentence + '\n' + CurrentWord.sentenceCN;
+            }
+            else if(CurrentWord.phrase != null)
+            {
+                SentenceTran = CurrentWord.phrase + '\n' + CurrentWord.phraseCN;
+            }
+            new ToastContentBuilder()
+            .AddText(WordPhonePosTran)
+            .AddText(SentenceTran)
+            
+            .AddButton(new ToastButton()
+                .SetContent("记住了！")
+                .AddArgument("action", "succeed")
+                .SetBackgroundActivation())
+
+            .AddButton(new ToastButton()
+                .SetContent("没记住..")
+                .AddArgument("action", "fail")
+                .SetBackgroundActivation())
+            .Show();
+
+            return Ans;
         }
     }
 }

@@ -1,7 +1,7 @@
 using GalaSoft.MvvmLight;
-using ToastFish.PushControl;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
+using ToastFish.PushControl;
 
 namespace ToastFish.ViewModel
 {
@@ -15,8 +15,7 @@ namespace ToastFish.ViewModel
 
         private void PushTest()
         {
-            RecitationMode recitationMode = new RecitationMode();
-            recitationMode.button_Click();
+            PushWords.Recitation(15);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ToastFish.Model.SqliteControl
 
         SQLiteConnection connectToDatabase()
         {
-            var databasePath = "Data Source=D:\\VS\\ToastFish\\Model\\SqliteControl\\inami.db;Version=3";
+            var databasePath = @"Data Source=D:\WPF_Project\ToastFish\Model\SqliteControl\inami.db;Version=3";
             return new SQLiteConnection(databasePath);
         }
 

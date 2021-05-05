@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ToastFish.ViewModel;
+using Windows.Foundation.Collections;
 
 namespace ToastFish
 {
@@ -24,7 +26,13 @@ namespace ToastFish
         public MainWindow()
         {
             InitializeComponent();
-            //this.DataContext = new TestViewModel();
+            // Listen to notification activation
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                // Obtain the arguments from the notification
+                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                string a = args["action"];
+            };
         }
     }
 }
