@@ -1,24 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
+using System.Diagnostics;
 
 namespace ToastFish.PushControl
 {
     class PushWords
     {
-        public static void Recitation(int number)
+        public static int PUSH_CURRENT_STATUS = 0;
+
+        public static Task<bool> ProcessToastNotification()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
+                string Status = Args["action"];
+                if (Status == "succeed")
+                {
+                    tcs.TrySetResult(true);
+                }
+                else
+                {
+                    tcs.TrySetResult(false);
+                }
+            };
+
+            return tcs.Task;
+        }
+
+        public static async void Recitation(int Number)
         {
             Select Query = new Select();
-            List<Word> Result = Query.GetRandomWordList(number);
-
-            foreach (var CurrentWord in Result)
+            List<Word> RandomList = Query.GetRandomWordList(Number);
+            List<Word> CopyList = Clone<Word>(RandomList);
+            while(CopyList.Count != 0)
             {
-                bool Cur = PushOneWord(CurrentWord);
-                break;
+                Word CurrentWord = Query.GetRandomWord(CopyList);
+                PushOneWord(CurrentWord);
+                
+                PUSH_CURRENT_STATUS = 2;
+                while (PUSH_CURRENT_STATUS == 2)
+                {
+                    var task = PushControl.PushWords.ProcessToastNotification();
+                    if (task.Result)
+                        PUSH_CURRENT_STATUS = 1;
+                }
+                if(PUSH_CURRENT_STATUS == 1)
+                {
+                    CopyList.Remove(CurrentWord);
+                }
             }
 
             //// 基本单词
@@ -62,9 +102,8 @@ namespace ToastFish.PushControl
             //.Show();
         }
 
-        public static bool PushOneWord(Word CurrentWord) 
+        public static void PushOneWord(Word CurrentWord)
         {
-            bool Ans = false;
             string WordPhonePosTran = CurrentWord.headWord + "  (" + CurrentWord.usPhone + ")\n" + CurrentWord.pos + ". " + CurrentWord.tranCN;
             string SentenceTran = "";
             if(CurrentWord.sentence != null && CurrentWord.sentence.Length < 50)
@@ -89,8 +128,37 @@ namespace ToastFish.PushControl
                 .AddArgument("action", "fail")
                 .SetBackgroundActivation())
             .Show();
+        }
 
-            return Ans;
+        public static Word Clone<Word>(Word RealObject)
+        {
+            using (Stream objStream = new MemoryStream())
+            {
+                //利用 System.Runtime.Serialization序列化与反序列化完成引用对象的复制
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(objStream, RealObject);
+                objStream.Seek(0, SeekOrigin.Begin);
+                return (Word)formatter.Deserialize(objStream);
+            }
+
+        }
+        /// <summary>
+        /// 克隆对象列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="RealObject"></param>
+        /// <returns></returns>
+        public static List<Word> Clone<Word>(List<Word> RealObject)
+        {
+            using (Stream objStream = new MemoryStream())
+            {
+                //利用 System.Runtime.Serialization序列化与反序列化完成引用对象的复制
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(objStream, RealObject);
+                objStream.Seek(0, SeekOrigin.Begin);
+                return (List<Word>)formatter.Deserialize(objStream);
+            }
+
         }
     }
 }

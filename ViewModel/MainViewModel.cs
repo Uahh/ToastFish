@@ -15,7 +15,7 @@ namespace ToastFish.ViewModel
 
         private void PushTest()
         {
-            PushWords.Recitation(15);
+            PushWords.Recitation(5);
         }
     }
 }

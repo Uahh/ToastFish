@@ -13,24 +13,36 @@ namespace ToastFish.Model.SqliteControl
     {
         public Select()
         {
-            DataBase = connectToDatabase();
+            DataBase = ConnectToDatabase();
         }
 
         SQLiteConnection DataBase;
         IEnumerable<Word> WordList;
 
-        SQLiteConnection connectToDatabase()
+        /// <summary>
+        /// 连接数据库
+        /// </summary>
+        SQLiteConnection ConnectToDatabase()
         {
             var databasePath = @"Data Source=D:\WPF_Project\ToastFish\Model\SqliteControl\inami.db;Version=3";
             return new SQLiteConnection(databasePath);
         }
 
+        /// <summary>
+        /// 查找某本书的所有单词
+        /// </summary>
         public void SelectWordList()
         {
             Word temp = new Word();
             WordList = DataBase.Query<Word>("select * from CET4_1", temp);
         }
 
+        /// <summary>
+        /// 从词库里随机选择Number个单词
+        /// </summary>
+        /// <typeparam name="List<Word>"></typeparam>
+        /// <param name="Number"></param>
+        /// <returns></returns>
         public List<Word> GetRandomWordList(int Number)
         {
             List<Word> Result = new List<Word>();
@@ -54,8 +66,16 @@ namespace ToastFish.Model.SqliteControl
 
             return Result;
         }
+
+        public Word GetRandomWord(List<Word> WordList)
+        {
+            Random Rd = new Random();
+            int Index = Rd.Next(WordList.Count);
+            return WordList[Index];
+        }
     }
 
+    [Serializable]
     public class Word
     {
         public int wordRank { get; set; }

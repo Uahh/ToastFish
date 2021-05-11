@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ToastFish.PushControl;
 using ToastFish.ViewModel;
 using Windows.Foundation.Collections;
 
@@ -26,13 +27,39 @@ namespace ToastFish
         public MainWindow()
         {
             InitializeComponent();
-            // Listen to notification activation
-            ToastNotificationManagerCompat.OnActivated += toastArgs =>
-            {
-                // Obtain the arguments from the notification
-                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-                string a = args["action"];
-            };
+            //ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            //{
+            //    ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
+            //    string Status = Args["action"];
+            //    if (Status == "succeed")
+            //    {
+            //        PushWords.PUSH_CURRENT_STATUS = 1;
+            //    }
+            //    else
+            //    {
+            //        PushWords.PUSH_CURRENT_STATUS = 0;
+            //    }
+            //};
+            //Task<bool> ProcessToastNotification()
+            //{
+            //    var tcs = new TaskCompletionSource<bool>();
+
+            //    ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            //    {
+            //        ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
+            //        string Status = Args["action"];
+            //        if (Status == "succeed")
+            //        {
+            //            tcs.SetResult(true);
+            //        }
+            //        else
+            //        {
+            //            tcs.SetResult(false);
+            //        }
+            //    };
+
+            //    return tcs.Task;
+            //}
         }
     }
 }
