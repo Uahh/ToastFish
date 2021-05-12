@@ -51,7 +51,7 @@ namespace ToastFish.Model.SqliteControl
             List<int> RandomList = new List<int>();
             foreach(var Word in WordList)
             {
-                if(Word.status == 0)
+                if(Word.status == 0) //单词是否背过
                 {
                     RandomList.Add(Word.wordRank);
                 }
