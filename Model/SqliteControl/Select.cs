@@ -90,7 +90,7 @@ namespace ToastFish.Model.SqliteControl
         public String tranOther { get; set; }
         public String question { get; set; }
         public String explain { get; set; }
-        public String rightInde { get; set; }
+        public String rightIndex { get; set; }
         public String examType { get; set; }
         public String choiceIndexOne { get; set; }
         public String choiceIndexTwo { get; set; }

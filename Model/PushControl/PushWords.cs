@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
@@ -12,8 +13,9 @@ namespace ToastFish.PushControl
     class PushWords
     {
         // 当前推送单词的状态
-        public static int WORD_CURRENT_STATUS = 0;
+        public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态，
         public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;
+        public static int QUESTION_CURRENT_STATUS = 0;
 
         /// <summary>
         /// 使用Task防止程序阻塞
@@ -53,7 +55,15 @@ namespace ToastFish.PushControl
             ToastNotificationManagerCompat.OnActivated += toastArgs =>
             {
                 ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
-                string Status = Args["action"];
+                string Status = "";
+                try
+                {
+                    Status = Args["action"];
+                }
+                catch
+                {
+                    tcs.TrySetResult(false);
+                }
                 if (Status == QUESTION_CURRENT_RIGHT_ANSWER.ToString())
                 {
                     tcs.TrySetResult(true);
@@ -62,7 +72,6 @@ namespace ToastFish.PushControl
                 {
                     tcs.TrySetResult(false);
                 }
-                QUESTION_CURRENT_RIGHT_ANSWER = -1;
             };
             return tcs.Task;
         }
@@ -91,71 +100,89 @@ namespace ToastFish.PushControl
                     CopyList.Remove(CurrentWord);
                 }
             }
-            for(int i = RandomList.Count - 1; i >= 0; i--)
+            PushMessage("背完了！！接下来开始测验！！！");
+            Thread.Sleep(5000);
+            // 背诵结束
+
+            CopyList = Clone<Word>(RandomList);
+
+            for (int i = CopyList.Count - 1; i >= 0; i--)
+            {
+                if (CopyList[i].question != null)
+                    CopyList.Remove(CopyList[i]);
+            }
+
+            while (CopyList.Count != 0)
+            {
+                Word CurrentWord = Query.GetRandomWord(CopyList);
+                List<Word> FakeWordList = Query.GetRandomWordList(3);
+                
+                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord, FakeWordList[2].headWord);
+
+                QUESTION_CURRENT_STATUS = 2;
+                while (QUESTION_CURRENT_STATUS == 2)
+                {
+                    var task = PushControl.PushWords.ProcessToastNotificationQuestion();
+                    if (task.Result)
+                        QUESTION_CURRENT_STATUS = 1;
+                    else
+                        QUESTION_CURRENT_STATUS = 0;
+                }
+                if (QUESTION_CURRENT_STATUS == 1)
+                {
+                    CopyList.Remove(CurrentWord);
+                    PushMessage("正确,太强了吧！");
+                }
+                else if (QUESTION_CURRENT_STATUS == 0)
+                {
+                    CopyList.Remove(CurrentWord);
+                    new ToastContentBuilder()
+                    .AddText("错了")
+                    .AddText("正确答案：" + CurrentWord.headWord)
+                    .Show();
+                }
+            }
+
+
+
+
+
+            for (int i = RandomList.Count - 1; i >= 0; i--)
             {
                 if (RandomList[i].question == null)
                     RandomList.Remove(RandomList[i]);
             }
-            PushMessage("背完了！！！接下来开始测验！！！一共有" + RandomList.Count.ToString() + "个问题");
+
             while (RandomList.Count != 0)
             {
                 Word CurrentWord = Query.GetRandomWord(RandomList);
                 PushOneQuestion(CurrentWord);
 
-                WORD_CURRENT_STATUS = 2;
-                while (WORD_CURRENT_STATUS == 2)
+                QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex);
+                QUESTION_CURRENT_STATUS = 2;
+                while (QUESTION_CURRENT_STATUS == 2)
                 {
                     var task = PushControl.PushWords.ProcessToastNotificationQuestion();
                     if (task.Result)
-                        WORD_CURRENT_STATUS = 1;
+                        QUESTION_CURRENT_STATUS = 1;
+                    else
+                        QUESTION_CURRENT_STATUS = 0;
                 }
-                if (WORD_CURRENT_STATUS == 1)
+                if (QUESTION_CURRENT_STATUS == 1)
                 {
                     RandomList.Remove(CurrentWord);
+                    PushMessage("正确,太强了吧！");
                 }
+                else if (QUESTION_CURRENT_STATUS == 0)
+                {
+                    RandomList.Remove(CurrentWord);
+                    new ToastContentBuilder()
+                    .AddText("错了")
+                    .AddText(CurrentWord.explain)
+                    .Show();
+                }
+                PushMessage("结束了！恭喜！！！");
             }
-
-
-
-            //// 基本单词
-            //new ToastContentBuilder()
-            //    .AddText("cancel  ('kænsl')\nvt.取消，撤销；删去")
-            //    .AddText("they are more advanced than earlier models.\n它们比先前的型号更先进。")
-            //    .AddButton(new ToastButton()
-            //        .SetContent("Reply")
-            //        .AddArgument("action", "reply")
-            //        .SetBackgroundActivation())
-
-            //    .AddButton(new ToastButton()
-            //        .SetContent("Like")
-            //        .AddArgument("action", "like")
-            //        .SetBackgroundActivation())
-            //    .Show();
-
-            ////选择题
-            //new ToastContentBuilder()
-            //.AddText("question")
-            //.AddText("As we can no longer wait for the delivery of our order, we have to _______ it.", hintMaxLines: 2)
-            //.AddButton(new ToastButton()
-            //    .SetContent("A.postpone")
-            //    .AddArgument("action", "reply")
-            //    .SetBackgroundActivation())
-
-            //.AddButton(new ToastButton()
-            //    .SetContent("B.refuse")
-            //    .AddArgument("action", "like")
-            //    .SetBackgroundActivation())
-
-            //.AddButton(new ToastButton()
-            //    .SetContent("C.delay")
-            //    .AddArgument("delay", "like")
-            //    .SetBackgroundActivation())
-
-            //.AddButton(new ToastButton()
-            //    .SetContent("D.cancel1234567890")
-            //    .AddArgument("action", "like")
-            //    .SetBackgroundActivation())
-            //.Show();
         }
 
         public static void PushMessage(string Message, string Buttom = "")
@@ -211,33 +238,151 @@ namespace ToastFish.PushControl
             string B = "B." + CurrentWord.choiceIndexTwo;
             string C = "C." + CurrentWord.choiceIndexThree;
             string D = "D." + CurrentWord.choiceIndexFour;
-            QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightInde);
 
             new ToastContentBuilder()
             .AddText("Question")
             .AddText(Question)
             
             .AddButton(new ToastButton()
-                .SetContent("记住了！")
+                .SetContent(A)
                 .AddArgument("action", "1")
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
-                .SetContent("没记住..")
+                .SetContent(B)
                 .AddArgument("action", "2")
                 .SetBackgroundActivation())
             
             .AddButton(new ToastButton()
-                .SetContent("记住了！")
+                .SetContent(C)
                 .AddArgument("action", "3")
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
-                .SetContent("没记住..")
+                .SetContent(D)
                 .AddArgument("action", "4")
                 .SetBackgroundActivation())
             .Show();
 
+        }
+
+        public static void PushOneTransQuestion(Word CurrentWord, string B, string C, string D)
+        {
+            string Question = CurrentWord.tranCN;
+            string A = CurrentWord.headWord;
+
+            Random Rd = new Random();
+            int AnswerIndex = Rd.Next(4);
+            QUESTION_CURRENT_RIGHT_ANSWER = AnswerIndex;
+
+            if (AnswerIndex == 0)
+            {
+                new ToastContentBuilder()
+               .AddText("Question")
+               .AddText(Question)
+
+               .AddButton(new ToastButton()
+                   .SetContent(A)
+                   .AddArgument("action", "0")
+                   .SetBackgroundActivation())
+
+               .AddButton(new ToastButton()
+                   .SetContent(B)
+                   .AddArgument("action", "1")
+                   .SetBackgroundActivation())
+
+               .AddButton(new ToastButton()
+                   .SetContent(C)
+                   .AddArgument("action", "2")
+                   .SetBackgroundActivation())
+
+               .AddButton(new ToastButton()
+                   .SetContent(D)
+                   .AddArgument("action", "3")
+                   .SetBackgroundActivation())
+               .Show();
+            }
+            else if (AnswerIndex == 1)
+            {
+               new ToastContentBuilder()
+              .AddText("Question")
+              .AddText(Question)
+
+              .AddButton(new ToastButton()
+                  .SetContent(B)
+                  .AddArgument("action", "0")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(A)
+                  .AddArgument("action", "1")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(C)
+                  .AddArgument("action", "2")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(D)
+                  .AddArgument("action", "3")
+                  .SetBackgroundActivation())
+              .Show();
+            }
+            else if (AnswerIndex == 2)
+            {
+               new ToastContentBuilder()
+              .AddText("Question")
+              .AddText(Question)
+
+              .AddButton(new ToastButton()
+                  .SetContent(C)
+                  .AddArgument("action", "0")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(B)
+                  .AddArgument("action", "1")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(A)
+                  .AddArgument("action", "2")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(D)
+                  .AddArgument("action", "3")
+                  .SetBackgroundActivation())
+              .Show();
+            }
+            else if (AnswerIndex == 3)
+            {
+               new ToastContentBuilder()
+              .AddText("Question")
+              .AddText(Question)
+
+              .AddButton(new ToastButton()
+                  .SetContent(D)
+                  .AddArgument("action", "0")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(B)
+                  .AddArgument("action", "1")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(C)
+                  .AddArgument("action", "2")
+                  .SetBackgroundActivation())
+
+              .AddButton(new ToastButton()
+                  .SetContent(A)
+                  .AddArgument("action", "3")
+                  .SetBackgroundActivation())
+              .Show();
+            }
         }
 
         /// <summary>
