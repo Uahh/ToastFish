@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
+using ToastFish.Model.Download;
+using ToastFish.Model.Mp3;
 
 namespace ToastFish.PushControl
 {
@@ -16,13 +17,18 @@ namespace ToastFish.PushControl
         public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态，
         public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;
         public static int QUESTION_CURRENT_STATUS = 0;
+        public static Dictionary<string, string> AnswerDict = new Dictionary<string, string> {
+            {"0","A"},{"1","B"},{"2","C"}
+        };
+        public static DownloadMp3 Download = new DownloadMp3();
+        public static MUSIC MIC = new MUSIC();
 
         /// <summary>
         /// 使用Task防止程序阻塞
         /// </summary>
-        public static Task<bool> ProcessToastNotificationRecitation()
+        public static Task<int> ProcessToastNotificationRecitation()
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<int>();
 
             ToastNotificationManagerCompat.OnActivated += toastArgs =>
             {
@@ -34,23 +40,30 @@ namespace ToastFish.PushControl
                 }
                 catch
                 {
-                    tcs.TrySetResult(false);
                 }
                 if (Status == "succeed")
-                    {
-                        tcs.TrySetResult(true);
-                    }
-                    else
-                    {
-                        tcs.TrySetResult(false);
-                    }
+                {
+                    tcs.TrySetResult(0);
+                }
+                else if (Status == "fail")
+                {
+                    tcs.TrySetResult(1);
+                }
+                else if (Status == "UK")
+                {
+                    tcs.TrySetResult(2);
+                }
+                else if (Status == "US")
+                {
+                    tcs.TrySetResult(3);
+                }
             };
             return tcs.Task;
         }
 
-        public static Task<bool> ProcessToastNotificationQuestion()
+        public static Task<int> ProcessToastNotificationQuestion()
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<int>();
 
             ToastNotificationManagerCompat.OnActivated += toastArgs =>
             {
@@ -62,15 +75,16 @@ namespace ToastFish.PushControl
                 }
                 catch
                 {
-                    tcs.TrySetResult(false);
+                    tcs.TrySetResult(-1);
                 }
+                string temp = QUESTION_CURRENT_RIGHT_ANSWER.ToString();
                 if (Status == QUESTION_CURRENT_RIGHT_ANSWER.ToString())
                 {
-                    tcs.TrySetResult(true);
+                    tcs.TrySetResult(1);
                 }
                 else
                 {
-                    tcs.TrySetResult(false);
+                    tcs.TrySetResult(0);
                 }
             };
             return tcs.Task;
@@ -90,10 +104,42 @@ namespace ToastFish.PushControl
                 while (WORD_CURRENT_STATUS == 2)
                 {
                     var task = PushControl.PushWords.ProcessToastNotificationRecitation();
-                    if (task.Result)
+                    if (task.Result == 0)
+                    {
                         WORD_CURRENT_STATUS = 1;
-                    else
+                    }
+                    else if (task.Result == 1)
+                    {
                         WORD_CURRENT_STATUS = 0;
+                    }
+                    else if (task.Result == 2)
+                    {
+                        WORD_CURRENT_STATUS = 0;
+                        try
+                        {
+                            Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_2");
+                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache";
+                            MIC.play();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+                    else if (task.Result == 3)
+                    {
+                        WORD_CURRENT_STATUS = 0;
+                        try
+                        {
+                            Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_1");
+                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache";
+                            MIC.play();
+                        }
+                        catch
+                        {
+
+                        }
+                    }
                 }
                 if (WORD_CURRENT_STATUS == 1)
                 {
@@ -101,7 +147,6 @@ namespace ToastFish.PushControl
                 }
             }
             PushMessage("背完了！！接下来开始测验！！！");
-            Thread.Sleep(5000);
             // 背诵结束
 
             CopyList = Clone<Word>(RandomList);
@@ -115,17 +160,17 @@ namespace ToastFish.PushControl
             while (CopyList.Count != 0)
             {
                 Word CurrentWord = Query.GetRandomWord(CopyList);
-                List<Word> FakeWordList = Query.GetRandomWordList(3);
+                List<Word> FakeWordList = Query.GetRandomWordList(2);
                 
-                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord, FakeWordList[2].headWord);
+                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
 
                 QUESTION_CURRENT_STATUS = 2;
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
                     var task = PushControl.PushWords.ProcessToastNotificationQuestion();
-                    if (task.Result)
+                    if (task.Result == 1)
                         QUESTION_CURRENT_STATUS = 1;
-                    else
+                    else if(task.Result == 0)
                         QUESTION_CURRENT_STATUS = 0;
                 }
                 if (QUESTION_CURRENT_STATUS == 1)
@@ -137,15 +182,10 @@ namespace ToastFish.PushControl
                 {
                     CopyList.Remove(CurrentWord);
                     new ToastContentBuilder()
-                    .AddText("错了")
-                    .AddText("正确答案：" + CurrentWord.headWord)
+                    .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
                     .Show();
                 }
             }
-
-
-
-
 
             for (int i = RandomList.Count - 1; i >= 0; i--)
             {
@@ -163,9 +203,9 @@ namespace ToastFish.PushControl
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
                     var task = PushControl.PushWords.ProcessToastNotificationQuestion();
-                    if (task.Result)
+                    if (task.Result == 1)
                         QUESTION_CURRENT_STATUS = 1;
-                    else
+                    else if (task.Result == 0)
                         QUESTION_CURRENT_STATUS = 0;
                 }
                 if (QUESTION_CURRENT_STATUS == 1)
@@ -177,12 +217,12 @@ namespace ToastFish.PushControl
                 {
                     RandomList.Remove(CurrentWord);
                     new ToastContentBuilder()
-                    .AddText("错了")
+                    .AddText("错误, 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()])
                     .AddText(CurrentWord.explain)
                     .Show();
                 }
-                PushMessage("结束了！恭喜！！！");
             }
+            PushMessage("结束了！恭喜！！！");
         }
 
         public static void PushMessage(string Message, string Buttom = "")
@@ -228,7 +268,17 @@ namespace ToastFish.PushControl
                 .SetContent("没记住..")
                 .AddArgument("action", "fail")
                 .SetBackgroundActivation())
-            .Show();
+            
+            .AddButton(new ToastButton()
+                .SetContent("英音")
+                .AddArgument("action", "UK")
+                .SetBackgroundActivation())
+            
+            .AddButton(new ToastButton()
+                .SetContent("美音")
+                .AddArgument("action", "US")
+                .SetBackgroundActivation())
+                .Show();
         }
 
         public static void PushOneQuestion(Word CurrentWord)
@@ -266,13 +316,13 @@ namespace ToastFish.PushControl
 
         }
 
-        public static void PushOneTransQuestion(Word CurrentWord, string B, string C, string D)
+        public static void PushOneTransQuestion(Word CurrentWord, string B, string C)
         {
             string Question = CurrentWord.tranCN;
             string A = CurrentWord.headWord;
 
             Random Rd = new Random();
-            int AnswerIndex = Rd.Next(4);
+            int AnswerIndex = Rd.Next(3);
             QUESTION_CURRENT_RIGHT_ANSWER = AnswerIndex;
 
             if (AnswerIndex == 0)
@@ -282,24 +332,20 @@ namespace ToastFish.PushControl
                .AddText(Question)
 
                .AddButton(new ToastButton()
-                   .SetContent(A)
+                   .SetContent("A." + A)
                    .AddArgument("action", "0")
                    .SetBackgroundActivation())
 
                .AddButton(new ToastButton()
-                   .SetContent(B)
+                   .SetContent("B." + B)
                    .AddArgument("action", "1")
                    .SetBackgroundActivation())
 
                .AddButton(new ToastButton()
-                   .SetContent(C)
+                   .SetContent("C." + C)
                    .AddArgument("action", "2")
                    .SetBackgroundActivation())
 
-               .AddButton(new ToastButton()
-                   .SetContent(D)
-                   .AddArgument("action", "3")
-                   .SetBackgroundActivation())
                .Show();
             }
             else if (AnswerIndex == 1)
@@ -309,23 +355,18 @@ namespace ToastFish.PushControl
               .AddText(Question)
 
               .AddButton(new ToastButton()
-                  .SetContent(B)
+                  .SetContent("A." + B)
                   .AddArgument("action", "0")
                   .SetBackgroundActivation())
 
               .AddButton(new ToastButton()
-                  .SetContent(A)
+                  .SetContent("B." + A)
                   .AddArgument("action", "1")
                   .SetBackgroundActivation())
 
               .AddButton(new ToastButton()
-                  .SetContent(C)
+                  .SetContent("C." + C)
                   .AddArgument("action", "2")
-                  .SetBackgroundActivation())
-
-              .AddButton(new ToastButton()
-                  .SetContent(D)
-                  .AddArgument("action", "3")
                   .SetBackgroundActivation())
               .Show();
             }
@@ -336,50 +377,18 @@ namespace ToastFish.PushControl
               .AddText(Question)
 
               .AddButton(new ToastButton()
-                  .SetContent(C)
+                  .SetContent("A." + C)
                   .AddArgument("action", "0")
                   .SetBackgroundActivation())
 
               .AddButton(new ToastButton()
-                  .SetContent(B)
+                  .SetContent("B." + B)
                   .AddArgument("action", "1")
                   .SetBackgroundActivation())
 
               .AddButton(new ToastButton()
-                  .SetContent(A)
+                  .SetContent("C." + A)
                   .AddArgument("action", "2")
-                  .SetBackgroundActivation())
-
-              .AddButton(new ToastButton()
-                  .SetContent(D)
-                  .AddArgument("action", "3")
-                  .SetBackgroundActivation())
-              .Show();
-            }
-            else if (AnswerIndex == 3)
-            {
-               new ToastContentBuilder()
-              .AddText("Question")
-              .AddText(Question)
-
-              .AddButton(new ToastButton()
-                  .SetContent(D)
-                  .AddArgument("action", "0")
-                  .SetBackgroundActivation())
-
-              .AddButton(new ToastButton()
-                  .SetContent(B)
-                  .AddArgument("action", "1")
-                  .SetBackgroundActivation())
-
-              .AddButton(new ToastButton()
-                  .SetContent(C)
-                  .AddArgument("action", "2")
-                  .SetBackgroundActivation())
-
-              .AddButton(new ToastButton()
-                  .SetContent(A)
-                  .AddArgument("action", "3")
                   .SetBackgroundActivation())
               .Show();
             }

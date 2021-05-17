@@ -27,39 +27,6 @@ namespace ToastFish
         public MainWindow()
         {
             InitializeComponent();
-            //ToastNotificationManagerCompat.OnActivated += toastArgs =>
-            //{
-            //    ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
-            //    string Status = Args["action"];
-            //    if (Status == "succeed")
-            //    {
-            //        PushWords.PUSH_CURRENT_STATUS = 1;
-            //    }
-            //    else
-            //    {
-            //        PushWords.PUSH_CURRENT_STATUS = 0;
-            //    }
-            //};
-            //Task<bool> ProcessToastNotification()
-            //{
-            //    var tcs = new TaskCompletionSource<bool>();
-
-            //    ToastNotificationManagerCompat.OnActivated += toastArgs =>
-            //    {
-            //        ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
-            //        string Status = Args["action"];
-            //        if (Status == "succeed")
-            //        {
-            //            tcs.SetResult(true);
-            //        }
-            //        else
-            //        {
-            //            tcs.SetResult(false);
-            //        }
-            //    };
-
-            //    return tcs.Task;
-            //}
         }
     }
 }

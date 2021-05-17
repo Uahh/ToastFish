@@ -57,6 +57,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Mp3\DownloadMp3.cs" />
+    <Compile Include="Model\Mp3\PlayMp3.cs" />
     <Compile Include="Model\PushControl\PushWords.cs" />
     <Compile Include="Model\SqliteControl\Select.cs" />
     <Compile Include="Model\TestModel.cs" />
