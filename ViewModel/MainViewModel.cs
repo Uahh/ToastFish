@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using ToastFish.PushControl;
 using ToastFish.Model.Download;
 using ToastFish.Model.Mp3;
+using ToastFish.ViewModel;
 
 namespace ToastFish.ViewModel
 {

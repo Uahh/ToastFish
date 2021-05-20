@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Hardcodet.Wpf.TaskbarNotification;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
+using ToastFish.ViewModel;
 
 namespace ToastFish
 {
@@ -13,5 +16,6 @@ namespace ToastFish
     /// </summary>
     public partial class App : Application
     {
+        
     }
 }
