@@ -5,20 +5,22 @@ using ToastFish.PushControl;
 using ToastFish.Model.Download;
 using ToastFish.Model.Mp3;
 using ToastFish.ViewModel;
+using System.Windows.Forms;
 
 namespace ToastFish.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel()
+        public MainViewModel()      
         {
             Push = new RelayCommand(PushTest);
         }
+        public NotifyIcon notifyIcon;
         public ICommand Push { get; set; }
 
         private void PushTest()
         {
-            PushWords.Recitation(3);
+            PushWords.Recitation(10);
         }
     }
 }

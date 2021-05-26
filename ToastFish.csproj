@@ -36,10 +36,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\chika16.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,16 +62,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ico.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ico.resx</DependentUpon>
-    </Compile>
     <Compile Include="Model\Mp3\DownloadMp3.cs" />
     <Compile Include="Model\Mp3\PlayMp3.cs" />
     <Compile Include="Model\PushControl\PushWords.cs" />
     <Compile Include="Model\SqliteControl\Select.cs" />
     <Compile Include="Model\TestModel.cs" />
+    <Compile Include="Resources\IconChika.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IconChika.resx</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\TestViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
@@ -98,15 +102,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="ico.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ico.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\IconChika.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>IconChika.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Model\SqliteControl\inami.db" />
     <None Include="Properties\Settings.settings">
@@ -144,7 +147,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="chika16.ico" />
+    <Resource Include="Resources\chika16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="IMG_3729%2820210526-194228%29.JPG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -21,7 +21,7 @@ namespace ToastFish.PushControl
             {"0","A"},{"1","B"},{"2","C"}
         };
         public static DownloadMp3 Download = new DownloadMp3();
-        public static MUSIC MIC = new MUSIC();
+        //public static MUSIC MIC = new MUSIC();
 
         /// <summary>
         /// 使用Task防止程序阻塞
@@ -118,7 +118,8 @@ namespace ToastFish.PushControl
                         try
                         {
                             Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_2");
-                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache";
+                            MUSIC MIC = new MUSIC();
+                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + CurrentWord.headWord + "_2.mp3";
                             MIC.play();
                         }
                         catch
@@ -132,7 +133,8 @@ namespace ToastFish.PushControl
                         try
                         {
                             Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_1");
-                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache";
+                            MUSIC MIC = new MUSIC();
+                            MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + CurrentWord.headWord + "_1.mp3";
                             MIC.play();
                         }
                         catch

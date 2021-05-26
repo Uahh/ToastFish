@@ -16,6 +16,8 @@ namespace ToastFish.Model.SqliteControl
             DataBase = ConnectToDatabase();
         }
 
+        public static string TableName = "CET4_1";
+
         SQLiteConnection DataBase;
         IEnumerable<Word> WordList;
 
@@ -34,7 +36,7 @@ namespace ToastFish.Model.SqliteControl
         public void SelectWordList()
         {
             Word temp = new Word();
-            WordList = DataBase.Query<Word>("select * from CET4_1", temp);
+            WordList = DataBase.Query<Word>("select * from " + TableName, temp);
         }
 
         /// <summary>

@@ -6,11 +6,14 @@
         xmlns:local="clr-namespace:ToastFish"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator},Path=Main}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1269" Width="819">
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
-            <!--<TextBlock Text="{Binding Test.Introduction}" FontSize="30" ></TextBlock>-->
-            <Button Command="{Binding Push}" Content="Push"/>
-        </StackPanel>
+        <Image x:Name="___ToastFish_component_IMG_3729_20210526_194228__JPG" Margin="0" Source="/ToastFish;component/IMG_3729(20210526-194228).JPG" Stretch="Fill" Grid.ColumnSpan="2"/>
+        <!--<Image x:Name="___ToastFish_component_IMG_3729_20210526_194228__JPG" Margin="0,214,349,0" Source="/ToastFish;component/IMG_3729(20210526-194228).JPG" Stretch="Fill"/>-->
+        <!--<StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" >
+            -->
+        <!--<Button Command="{Binding Push}" Content="Push"/>-->
+        <!--
+        </StackPanel>-->
     </Grid>
 </Window>
