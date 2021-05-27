@@ -14,12 +14,14 @@ namespace ToastFish.Model.SqliteControl
         public Select()
         {
             DataBase = ConnectToDatabase();
+            DataBase.Open();
         }
 
         public static string TableName = "CET4_1";
 
         SQLiteConnection DataBase;
         IEnumerable<Word> WordList;
+        IEnumerable<BookCount> CountList;
 
         /// <summary>
         /// 连接数据库
@@ -35,8 +37,53 @@ namespace ToastFish.Model.SqliteControl
         /// </summary>
         public void SelectWordList()
         {
-            Word temp = new Word();
-            WordList = DataBase.Query<Word>("select * from " + TableName, temp);
+            Word Temp = new Word();
+            WordList = DataBase.Query<Word>("select * from " + TableName, Temp);
+        }
+
+        /// <summary>
+        /// 标记单词已背过
+        /// </summary>
+        public void UpdateWord(int WordRank)
+        {
+            SQLiteCommand Update = DataBase.CreateCommand();
+            Update.CommandText = "UPDATE " + TableName + " SET status = 1 WHERE wordRank = " + WordRank;
+            Update.ExecuteNonQuery();
+        }
+
+        public void UpdateCount()
+        {
+            BookCount Temp = new BookCount();
+            CountList = DataBase.Query<BookCount>("select * from Count", Temp);
+            var CountArray = CountList.ToArray();
+            foreach(var OneCount in CountArray)
+            {
+                if(OneCount.bookName == TableName)
+                {
+                    SQLiteCommand Update = DataBase.CreateCommand();
+                    Update.CommandText = "UPDATE Count SET current = " + (OneCount.current + 1).ToString() + " WHERE bookName = " + TableName;
+                    Update.ExecuteNonQuery();
+                    break;
+                }
+            }
+        }
+
+        public List<int> SelectCount()
+        {
+            BookCount Temp = new BookCount();
+            CountList = DataBase.Query<BookCount>("select * from Count", Temp);
+            var CountArray = CountList.ToArray();
+            List<int> Output = new List<int>();
+            foreach (var OneCount in CountArray)
+            {
+                if (OneCount.bookName == TableName)
+                {
+                    Output.Add(OneCount.current);
+                    Output.Add(OneCount.number);
+                    return Output;
+                }
+            }
+            return Output;
         }
 
         /// <summary>
@@ -102,5 +149,12 @@ namespace ToastFish.Model.SqliteControl
         public String sentenceCN { get; set; }
         public String phrase { get; set; }
         public String phraseCN { get; set; }
+    }
+
+    public class BookCount
+    {
+        public String bookName { get; set; }
+        public int number { get; set; }
+        public int current { get; set; }
     }
 }

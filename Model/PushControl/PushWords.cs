@@ -21,7 +21,6 @@ namespace ToastFish.PushControl
             {"0","A"},{"1","B"},{"2","C"}
         };
         public static DownloadMp3 Download = new DownloadMp3();
-        //public static MUSIC MIC = new MUSIC();
 
         /// <summary>
         /// 使用Task防止程序阻塞
@@ -145,6 +144,8 @@ namespace ToastFish.PushControl
                 }
                 if (WORD_CURRENT_STATUS == 1)
                 {
+                    Query.UpdateWord(CurrentWord.wordRank);
+                    Query.UpdateCount();
                     CopyList.Remove(CurrentWord);
                 }
             }
@@ -224,6 +225,7 @@ namespace ToastFish.PushControl
                     .Show();
                 }
             }
+            
             PushMessage("结束了！恭喜！！！");
         }
 

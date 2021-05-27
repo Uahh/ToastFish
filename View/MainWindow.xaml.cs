@@ -31,6 +31,7 @@ namespace ToastFish
     public partial class MainWindow : Window
     {
         MainViewModel vm = new MainViewModel();
+        Select se = new Select();
         public MainWindow()
         {
             InitializeComponent();
@@ -115,8 +116,8 @@ namespace ToastFish
             KaoYan_2.Click += new EventHandler(KaoYan_2_Click);
             ToolStripItem Level4_1 = new ToolStripMenuItem("专四真题高频词");
             Level4_1.Click += new EventHandler(Level4_1_Click);
-            ToolStripItem Level4_2 = new ToolStripMenuItem("专四核心词汇");
-            Level4_2.Click += new EventHandler(Level4_2_Click);
+            ToolStripItem Level4luan_2 = new ToolStripMenuItem("专四核心词汇");
+            Level4luan_2.Click += new EventHandler(Level4luan_2_Click);
             ToolStripItem Level8_1 = new ToolStripMenuItem("专八真题高频词");
             Level8_1.Click += new EventHandler(Level8_1_Click);
             ToolStripItem Level8luan_2 = new ToolStripMenuItem("专八核心词汇");
@@ -139,7 +140,7 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(KaoYan_1);
             ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(KaoYan_2);
             ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level4_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level4_2);
+            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level4luan_2);
             ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level8_1);
             ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level8luan_2);
         }
@@ -153,105 +154,120 @@ namespace ToastFish
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level8luan_2";
-            PushWords.PushMessage("当前词库：专八核心词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：专八核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void Level8_1_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level8_1";
-            PushWords.PushMessage("当前词库：专八真题高频词");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：专八真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
-        private void Level4_2_Click(object sender, EventArgs e)
+        private void Level4luan_2_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Level4_2";
-            PushWords.PushMessage("当前词库：专四核心词汇");
+            Select.TableName = "Level4luan_2";
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：专四核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void Level4_1_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level4_1";
-            PushWords.PushMessage("当前词库：专四真题高频词");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：专四真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void KaoYan_2_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "KaoYan_2";
-            PushWords.PushMessage("当前词库：考研完整词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：考研完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void KaoYan_1_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "KaoYan_1";
-            PushWords.PushMessage("当前词库：考研必考词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：考研必考词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void SAT_2_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "SAT_2";
-            PushWords.PushMessage("当前词库：SAT词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：SAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void TOEFL_2_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "TOEFL_2";
-            PushWords.PushMessage("当前词库：TOEFL词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：TOEFL词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void IELTS_3_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "IELTS_3";
-            PushWords.PushMessage("当前词库：IELTS词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：IELTS词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void GRE_2_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "GRE_2";
-            PushWords.PushMessage("当前词库：GRE词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：GRE词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void GMAT_3_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "GMAT_3";
-            PushWords.PushMessage("当前词库：GMAT词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：GMAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void CET6_3_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET6_3";
-            PushWords.PushMessage("当前词库：六级完整词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：六级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void CET6_1_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET6_1";
-            PushWords.PushMessage("当前词库：六级核心词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：六级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void CET4_3_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET4_3";
-            PushWords.PushMessage("当前词库：四级完整词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：四级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
 
         private void CET4_1_Click(object sender, EventArgs e)
         {
             (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET4_1";
-            PushWords.PushMessage("当前词库：四级核心词汇");
+            List<int> res = se.SelectCount();
+            PushWords.PushMessage("当前词库：四级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
         }
         private void ExitApp_Click(object sender, EventArgs e)
         {
