@@ -22,6 +22,7 @@ using ToastFish.Resources;
 using System.Windows.Forms;
 using ToastFish.PushControl;
 using ToastFish.Model.SqliteControl;
+using System.Threading;
 
 namespace ToastFish
 {
@@ -73,9 +74,10 @@ namespace ToastFish
         }
 
         #region 托盘右键菜单
-        System.Windows.Forms.ToolStripMenuItem exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-        System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
         private new void ContextMenu()
         {
@@ -86,6 +88,9 @@ namespace ToastFish
 
             Begin.Text = "开始！";
             Begin.Click += new EventHandler(Begin_Click);
+
+            SetNumber.Text = "设置单词个数";
+            SetNumber.Click += new EventHandler(SetNumber_Click);
 
             SelectBook.Text = "选择词汇";
             
@@ -124,30 +129,37 @@ namespace ToastFish
             Level8luan_2.Click += new EventHandler(Level8luan_2_Click);
             CET4_1.PerformClick();
 
-            //Cms.Items.Add(new ToolStripSeparator());
             Cms.Items.Add(Begin);
+            Cms.Items.Add(SetNumber);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(exitMenuItem);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(CET4_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(CET4_3);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(CET6_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(CET6_3);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(GMAT_3);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(GRE_2);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(IELTS_3);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(TOEFL_2);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(SAT_2);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(KaoYan_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(KaoYan_2);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level4_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level4luan_2);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level8_1);
-            ((ToolStripDropDownItem)Cms.Items[1]).DropDownItems.Add(Level8luan_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GMAT_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GRE_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(IELTS_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(TOEFL_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(SAT_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4luan_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
         }
 
         private void Begin_Click(object sender, EventArgs e)
         {
-            PushWords.Recitation(10);
+            Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+            thread.Start(PushWords.WORD_NUMBER);
+            //PushWords.Recitation(PushWords.WORD_NUMBER);
+        }
+
+        private void SetNumber_Click(object sender, EventArgs e)
+        {
+            PushWords.SetWordNumber();
         }
 
         private void Level8luan_2_Click(object sender, EventArgs e)
@@ -271,6 +283,7 @@ namespace ToastFish
         }
         private void ExitApp_Click(object sender, EventArgs e)
         {
+            ToastNotificationManagerCompat.History.Clear();
             vm.notifyIcon.Visible = false;
             System.Windows.Application.Current.Shutdown();
         }

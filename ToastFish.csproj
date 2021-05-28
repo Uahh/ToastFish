@@ -111,7 +111,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IconChika.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Model\SqliteControl\inami.db" />
+    <None Include="Resources\inami.db" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

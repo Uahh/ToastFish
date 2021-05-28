@@ -15,12 +15,26 @@ namespace ToastFish.PushControl
     {
         // 当前推送单词的状态
         public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态，
+        public static int WORD_NUMBER = 10;
+        public static string WORD_NUMBER_STRING = "";
         public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;
         public static int QUESTION_CURRENT_STATUS = 0;
         public static Dictionary<string, string> AnswerDict = new Dictionary<string, string> {
             {"0","A"},{"1","B"},{"2","C"}
         };
         public static DownloadMp3 Download = new DownloadMp3();
+
+        public static bool IsNumber(string str)
+        {
+            char[] ch = new char[str.Length];
+            ch = str.ToCharArray();
+            for (int i = 0; i < ch.Length; i++)    
+            {
+                if (ch[i] < 48 || ch[i] > 57)
+                    return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// 使用Task防止程序阻塞
@@ -56,6 +70,10 @@ namespace ToastFish.PushControl
                 {
                     tcs.TrySetResult(3);
                 }
+                else
+                {
+                    tcs.TrySetResult(1);
+                }
             };
             return tcs.Task;
         }
@@ -89,10 +107,70 @@ namespace ToastFish.PushControl
             return tcs.Task;
         }
 
-        public static void Recitation(int Number)
+        public static Task<int> ProcessToastNotificationSetNumber()
+        {
+            var tcs = new TaskCompletionSource<int>();
+
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                ToastArguments Args = ToastArguments.Parse(toastArgs.Argument);
+                string Status = "";
+                try
+                {
+                    Status = Args["action"];
+                }
+                catch
+                {
+                    tcs.TrySetResult(0);
+                }
+                if (Status == "yes")
+                {
+                    WORD_NUMBER_STRING = (string)toastArgs.UserInput["number"];
+                    tcs.TrySetResult(1);
+                }
+                else
+                {
+                    tcs.TrySetResult(0);
+                }
+            };
+            return tcs.Task;
+        }
+
+        public static void SetWordNumber()
+        {
+            new ToastContentBuilder()
+            .AddText("这次要背多少个？")
+            .AddToastInput(new ToastSelectionBox("number")
+            {
+                DefaultSelectionBoxItemId = "10",
+                Items =
+                {
+                    new ToastSelectionBoxItem("5", "5"),
+                    new ToastSelectionBoxItem("10", "10"),
+                    new ToastSelectionBoxItem("15", "15"),
+                    new ToastSelectionBoxItem("20", "20")
+                }
+            })
+            .AddButton(new ToastButton()
+                .SetContent("确定")
+                .AddArgument("action", "yes")
+                .SetBackgroundActivation())
+            .Show();
+            var task = PushWords.ProcessToastNotificationSetNumber();
+            if(task.Result == 1)
+            {
+                if(IsNumber(WORD_NUMBER_STRING))
+                {
+                    WORD_NUMBER = int.Parse(WORD_NUMBER_STRING);
+                    PushMessage("已设置单词数量为：" + WORD_NUMBER_STRING);
+                }
+            } 
+        }
+
+        public static void Recitation(Object Number)
         {
             Select Query = new Select();
-            List<Word> RandomList = Query.GetRandomWordList(Number);
+            List<Word> RandomList = Query.GetRandomWordList((int)Number);
             List<Word> CopyList = Clone<Word>(RandomList);
             while (CopyList.Count != 0)
             {
@@ -102,7 +180,7 @@ namespace ToastFish.PushControl
                 WORD_CURRENT_STATUS = 2;
                 while (WORD_CURRENT_STATUS == 2)
                 {
-                    var task = PushControl.PushWords.ProcessToastNotificationRecitation();
+                    var task = PushWords.ProcessToastNotificationRecitation();
                     if (task.Result == 0)
                     {
                         WORD_CURRENT_STATUS = 1;
@@ -123,7 +201,7 @@ namespace ToastFish.PushControl
                         }
                         catch
                         {
-
+                            
                         }
                     }
                     else if (task.Result == 3)

@@ -61,7 +61,7 @@ namespace ToastFish.Model.SqliteControl
                 if(OneCount.bookName == TableName)
                 {
                     SQLiteCommand Update = DataBase.CreateCommand();
-                    Update.CommandText = "UPDATE Count SET current = " + (OneCount.current + 1).ToString() + " WHERE bookName = " + TableName;
+                    Update.CommandText = "UPDATE Count SET current = " + (OneCount.current + 1).ToString() + " WHERE bookName = '" + TableName + "'";
                     Update.ExecuteNonQuery();
                     break;
                 }
