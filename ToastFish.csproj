@@ -111,7 +111,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IconChika.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Resources\inami.db" />
+    <EmbeddedResource Include="Resources\inami.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

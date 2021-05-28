@@ -347,7 +347,7 @@ namespace ToastFish.PushControl
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
-                .SetContent("没记住..")
+                .SetContent("暂时跳过..")
                 .AddArgument("action", "fail")
                 .SetBackgroundActivation())
             
