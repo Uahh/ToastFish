@@ -20,7 +20,7 @@ namespace ToastFish.PushControl
         public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;
         public static int QUESTION_CURRENT_STATUS = 0;
         public static Dictionary<string, string> AnswerDict = new Dictionary<string, string> {
-            {"0","A"},{"1","B"},{"2","C"}
+            {"0","A"},{"1","B"},{"2","C"},{"3","D"}
         };
         public static DownloadMp3 Download = new DownloadMp3();
 
@@ -279,11 +279,11 @@ namespace ToastFish.PushControl
                 Word CurrentWord = Query.GetRandomWord(RandomList);
                 PushOneQuestion(CurrentWord);
 
-                QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex);
+                QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex) - 1;
                 QUESTION_CURRENT_STATUS = 2;
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
-                    var task = PushControl.PushWords.ProcessToastNotificationQuestion();
+                    var task = ProcessToastNotificationQuestion();
                     if (task.Result == 1)
                         QUESTION_CURRENT_STATUS = 1;
                     else if (task.Result == 0)

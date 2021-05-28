@@ -48,7 +48,8 @@ namespace ToastFish.Model.SqliteControl
         {
             SQLiteCommand Update = DataBase.CreateCommand();
             Update.CommandText = "UPDATE " + TableName + " SET status = 1 WHERE wordRank = " + WordRank;
-            Update.ExecuteNonQuery();
+            int a = Update.ExecuteNonQuery();
+            a = 1;
         }
 
         public void UpdateCount()
@@ -62,7 +63,7 @@ namespace ToastFish.Model.SqliteControl
                 {
                     SQLiteCommand Update = DataBase.CreateCommand();
                     Update.CommandText = "UPDATE Count SET current = " + (OneCount.current + 1).ToString() + " WHERE bookName = '" + TableName + "'";
-                    Update.ExecuteNonQuery();
+                    int a = Update.ExecuteNonQuery();
                     break;
                 }
             }
