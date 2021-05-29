@@ -12,10 +12,10 @@
             <RowDefinition Height="634.5"></RowDefinition>
             <RowDefinition Height="90"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Grid.ColumnSpan="2">
             <Image x:Name="___ToastFish_component_IMG_3729_20210526_194228__JPG" Margin="0" Source="Pack://Application:,,,/Resources/chikaGroup.JPG" Stretch="Fill" Grid.ColumnSpan="2"/>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <TextBlock Text="可以加群反馈BUG，提出意见建议。" Height="30" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0" />
             <TextBlock Text="（还可以一起摸鱼背单词）" Height="30" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,30,0,0" />
         </Grid>

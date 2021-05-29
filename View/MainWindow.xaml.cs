@@ -2,27 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ToastFish;
 using ToastFish.PushControl;
 using ToastFish.ViewModel;
-using Windows.Foundation.Collections;
 using ToastFish.Resources;
 using System.Windows.Forms;
-using ToastFish.PushControl;
 using ToastFish.Model.SqliteControl;
 using System.Threading;
+using ToastFish.Model.Mp3;
+using ToastFish.Model.Download;
 
 namespace ToastFish
 {
@@ -63,14 +51,23 @@ namespace ToastFish
             vm.notifyIcon.Visible = true;
             vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
         }
-
+        private static DownloadMp3 Download1 = new DownloadMp3();
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            this.Activate();
-            this.WindowState = WindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.Topmost = true;
-            this.Show();
+            //this.Activate();
+            //this.WindowState = WindowState.Normal;
+            //this.ShowInTaskbar = true;
+            //this.Topmost = true;
+            //this.Show();
+            testttttttt();
+        }
+
+        public static void testttttttt()
+        {
+            bool flag = Download1.HttpDownload("https://dict.youdao.com/dictvoice?audio=perceive&type=1.mp3", "test");
+            MUSIC MIC = new MUSIC();
+            MIC.FileName = "C:\\Users\\Admin\\Downloads\\ToastFish-main\\bin\\Debug\\Mp3Cache\\test.mp3";
+            MIC.play();
         }
 
         #region 托盘右键菜单
@@ -159,7 +156,9 @@ namespace ToastFish
 
         private void SetNumber_Click(object sender, EventArgs e)
         {
-            PushWords.SetWordNumber();
+            Thread thread = new Thread(new ThreadStart(PushWords.SetWordNumber));
+            thread.Start();
+            //PushWords.SetWordNumber();
         }
 
         private void Level8luan_2_Click(object sender, EventArgs e)

@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using ToastFish.Model.Mp3;
 
 namespace ToastFish.Model.Download
 {
@@ -58,5 +60,18 @@ namespace ToastFish.Model.Download
                 return false;
             }
         }
-    }
+
+        public static void PlayMp3(object Speech)
+        {
+            List<string> TempSpeech = (List<string>)Speech;
+            DownloadMp3 Download = new DownloadMp3();
+            bool flag = Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + TempSpeech[1] + ".mp3", TempSpeech[0] + "_2");
+            if(flag == true)
+            {
+                MUSIC MIC = new MUSIC();
+                MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + TempSpeech[0] + "_2.mp3";
+                MIC.play();
+            }
+        }
+    } 
 }
