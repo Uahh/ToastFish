@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace ToastFish.ViewModel
 {
-    public class MainViewModel : ViewModelBase
+    public class ToastFishModel : ViewModelBase
     {
-        public MainViewModel()      
+        public ToastFishModel()      
         {
             Push = new RelayCommand(PushTest);
         }

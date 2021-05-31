@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToastFish"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator},Path=Main}"
-        Title="MainWindow" Height="754.5" Width="409.5">
+        Title="ToastFish" Height="754.5" Width="409.5">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="634.5"></RowDefinition>

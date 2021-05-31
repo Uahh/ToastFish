@@ -29,15 +29,15 @@ namespace ToastFish.ViewModel
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ToastFishModel>();
             SimpleIoc.Default.Register<TestViewModel>();
         }
 
-        public MainViewModel Main
+        public ToastFishModel Main
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return ServiceLocator.Current.GetInstance<ToastFishModel>();
             }
         }
 

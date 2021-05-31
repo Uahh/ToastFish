@@ -19,7 +19,7 @@ namespace ToastFish
     /// </summary>
     public partial class MainWindow : Window
     {
-        MainViewModel vm = new MainViewModel();
+        ToastFishModel vm = new ToastFishModel();
         Select se = new Select();
         public MainWindow()
         {

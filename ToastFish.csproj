@@ -73,10 +73,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IconChika.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ToastFishModel.cs" />
     <Compile Include="ViewModel\TestViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Page Include="View\MainWindow.xaml">
+    <Page Include="View\ToastFish.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -84,8 +84,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="View\ToastFish.xaml.cs">
+      <DependentUpon>ToastFish.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

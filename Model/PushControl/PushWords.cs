@@ -273,7 +273,7 @@ namespace ToastFish.PushControl
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
-                    CopyList.Remove(CurrentWord);
+                    //CopyList.Remove(CurrentWord);
                     new ToastContentBuilder()
                     .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
                     .Show();
