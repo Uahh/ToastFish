@@ -51,23 +51,13 @@ namespace ToastFish
             vm.notifyIcon.Visible = true;
             vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
         }
-        private static DownloadMp3 Download1 = new DownloadMp3();
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            //this.Activate();
-            //this.WindowState = WindowState.Normal;
-            //this.ShowInTaskbar = true;
-            //this.Topmost = true;
-            //this.Show();
-            testttttttt();
-        }
-
-        public static void testttttttt()
-        {
-            bool flag = Download1.HttpDownload("https://dict.youdao.com/dictvoice?audio=perceive&type=1.mp3", "test");
-            MUSIC MIC = new MUSIC();
-            MIC.FileName = "C:\\Users\\Admin\\Downloads\\ToastFish-main\\bin\\Debug\\Mp3Cache\\test.mp3";
-            MIC.play();
+            this.Activate();
+            this.WindowState = WindowState.Normal;
+            this.ShowInTaskbar = true;
+            this.Topmost = true;
+            this.Show();
         }
 
         #region 托盘右键菜单
@@ -163,7 +153,7 @@ namespace ToastFish
 
         private void Level8luan_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level8luan_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：专八核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -171,7 +161,7 @@ namespace ToastFish
 
         private void Level8_1_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level8_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：专八真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -179,7 +169,7 @@ namespace ToastFish
 
         private void Level4luan_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level4luan_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：专四核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -187,7 +177,7 @@ namespace ToastFish
 
         private void Level4_1_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "Level4_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：专四真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -195,7 +185,7 @@ namespace ToastFish
 
         private void KaoYan_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "KaoYan_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：考研完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -203,7 +193,7 @@ namespace ToastFish
 
         private void KaoYan_1_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "KaoYan_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：考研必考词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -211,7 +201,7 @@ namespace ToastFish
 
         private void SAT_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "SAT_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：SAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -219,7 +209,7 @@ namespace ToastFish
 
         private void TOEFL_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "TOEFL_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：TOEFL词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -227,7 +217,7 @@ namespace ToastFish
 
         private void IELTS_3_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "IELTS_3";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：IELTS词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -235,7 +225,7 @@ namespace ToastFish
 
         private void GRE_2_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "GRE_2";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：GRE词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -243,7 +233,7 @@ namespace ToastFish
 
         private void GMAT_3_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "GMAT_3";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：GMAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -251,7 +241,7 @@ namespace ToastFish
 
         private void CET6_3_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET6_3";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：六级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -259,7 +249,7 @@ namespace ToastFish
 
         private void CET6_1_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET6_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：六级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -267,7 +257,7 @@ namespace ToastFish
 
         private void CET4_3_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET4_3";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：四级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
@@ -275,7 +265,7 @@ namespace ToastFish
 
         private void CET4_1_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             Select.TableName = "CET4_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：四级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());

@@ -269,7 +269,7 @@ namespace ToastFish.PushControl
                 {
                     CopyList.Remove(CurrentWord);
                     PushMessage("正确,太强了吧！");
-                    Thread.Sleep(2000);
+                    Thread.Sleep(3000);
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
@@ -277,7 +277,7 @@ namespace ToastFish.PushControl
                     new ToastContentBuilder()
                     .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
                     .Show();
-                    Thread.Sleep(2000);
+                    Thread.Sleep(3000);
                 }
             }
 
@@ -307,7 +307,7 @@ namespace ToastFish.PushControl
                 {
                     RandomList.Remove(CurrentWord);
                     PushMessage("正确,太强了吧！");
-                    Thread.Sleep(2000);
+                    Thread.Sleep(3000);
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
@@ -320,7 +320,7 @@ namespace ToastFish.PushControl
                 }
             }
             
-            PushMessage("结束了！恭喜！！！");
+            PushMessage("结束了！恭喜！");
         }
 
         public static void PushMessage(string Message, string Buttom = "")
