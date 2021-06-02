@@ -21,6 +21,7 @@ namespace ToastFish
     {
         ToastFishModel vm = new ToastFishModel();
         Select se = new Select();
+        Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         public MainWindow()
         {
             InitializeComponent();
@@ -139,9 +140,21 @@ namespace ToastFish
 
         private void Begin_Click(object sender, EventArgs e)
         {
-            Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-            thread.Start(PushWords.WORD_NUMBER);
-            //PushWords.Recitation(PushWords.WORD_NUMBER);
+            var state = thread.ThreadState;
+            if(state == System.Threading.ThreadState.WaitSleepJoin)
+            {
+                thread.Abort();
+                while (thread.ThreadState != ThreadState.Aborted)
+                {
+                    Thread.Sleep(100);
+                }
+                thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                thread.Start(PushWords.WORD_NUMBER);
+            }
+            else
+            {
+                thread.Start(PushWords.WORD_NUMBER);
+            }
         }
 
         private void SetNumber_Click(object sender, EventArgs e)

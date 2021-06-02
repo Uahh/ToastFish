@@ -316,7 +316,7 @@ namespace ToastFish.PushControl
                     .AddText("错误, 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()])
                     .AddText(CurrentWord.explain)
                     .Show();
-                    Thread.Sleep(5000);
+                    Thread.Sleep(8000);
                 }
             }
             
