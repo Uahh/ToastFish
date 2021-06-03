@@ -141,7 +141,7 @@ namespace ToastFish
         private void Begin_Click(object sender, EventArgs e)
         {
             var state = thread.ThreadState;
-            if(state == System.Threading.ThreadState.WaitSleepJoin)
+            if(state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
             {
                 thread.Abort();
                 while (thread.ThreadState != ThreadState.Aborted)
