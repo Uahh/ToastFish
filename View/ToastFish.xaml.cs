@@ -11,6 +11,7 @@ using ToastFish.Model.SqliteControl;
 using System.Threading;
 using ToastFish.Model.Mp3;
 using ToastFish.Model.Download;
+using System.Diagnostics;
 
 namespace ToastFish
 {
@@ -24,6 +25,8 @@ namespace ToastFish
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         public MainWindow()
         {
+
+            Form1_Load();
             InitializeComponent();
             this.DataContext = vm;
             SetNotifyIcon();
@@ -32,6 +35,24 @@ namespace ToastFish
 
             this.WindowState = (WindowState)FormWindowState.Minimized;
         }
+
+        private void Form1_Load()
+
+        {
+            //获取当前活动进程的模块名称
+            string moduleName = Process.GetCurrentProcess().MainModule.ModuleName;
+            //返回指定路径字符串的文件名
+            string processName = System.IO.Path.GetFileNameWithoutExtension(moduleName);
+            //根据文件名创建进程资源数组
+            Process[] processes = Process.GetProcessesByName(processName);
+            //如果该数组长度大于1，说明多次运行
+            if (processes.Length > 1)
+            {
+                System.Windows.Forms.MessageBox.Show("程序已经在运行了，不能运行两次。\n如果右下角软件已经退出，请在任务管理器中结束ToastFish任务。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);//弹出提示信息
+                this.Close();//关闭当前窗体
+            }
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
@@ -144,7 +165,7 @@ namespace ToastFish
             if(state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
             {
                 thread.Abort();
-                while (thread.ThreadState != ThreadState.Aborted)
+                while (thread.ThreadState != System.Threading.ThreadState.Aborted)
                 {
                     Thread.Sleep(100);
                 }

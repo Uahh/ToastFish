@@ -39,7 +39,7 @@ namespace ToastFish.PushControl
         }
 
         /// <summary>
-        /// 使用Task防止程序阻塞
+        /// 推送单词Task
         /// </summary>
         public static Task<int> ProcessToastNotificationRecitation()
         {
@@ -96,7 +96,7 @@ namespace ToastFish.PushControl
                 {
                     tcs.TrySetResult(-1);
                 }
-                string temp = QUESTION_CURRENT_RIGHT_ANSWER.ToString();
+                //string temp = QUESTION_CURRENT_RIGHT_ANSWER.ToString();
                 if (Status == QUESTION_CURRENT_RIGHT_ANSWER.ToString())
                 {
                     tcs.TrySetResult(1);
@@ -137,25 +137,6 @@ namespace ToastFish.PushControl
             };
             return tcs.Task;
         }
-
-        //public static Task<int> ProcessToastNotificationSpeech(string Speech, string headWord)
-        //{
-        //    var tcs = new TaskCompletionSource<int>();
-
-        //    if (SPEECH_STATUS == 0)
-        //    {
-        //        tcs.TrySetResult(0);
-        //    }
-        //    else if (SPEECH_STATUS == 1)
-        //    {
-        //        tcs.TrySetResult(1);
-        //    }
-        //    else if (SPEECH_STATUS == 2)
-        //    {
-        //        tcs.TrySetResult(2);
-        //    }
-        //    return tcs.Task;
-        //}
 
         public static void SetWordNumber()
         {
@@ -215,20 +196,7 @@ namespace ToastFish.PushControl
                         WORD_CURRENT_STATUS = 0;
                         SpeechSynthesizer synth = new SpeechSynthesizer();
                         synth.SpeakAsync(CurrentWord.headWord);
-
-                        //Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_2");
-                        //MUSIC MIC = new MUSIC();
-                        //MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + CurrentWord.headWord + "_2.mp3";
-                        //MIC.play();
                     }
-                    //else if (task.Result == 3)
-                    //{
-                    //    WORD_CURRENT_STATUS = 0;
-                    //    Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + CurrentWord.usSpeech + ".mp3", CurrentWord.headWord + "_1");
-                    //    MUSIC MIC = new MUSIC();
-                    //    MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + CurrentWord.headWord + "_1.mp3";
-                    //    MIC.play();
-                    //}
                 }
                 if (WORD_CURRENT_STATUS == 1)
                 {
@@ -259,11 +227,13 @@ namespace ToastFish.PushControl
                 QUESTION_CURRENT_STATUS = 2;
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
-                    var task = PushControl.PushWords.ProcessToastNotificationQuestion();
+                    var task = ProcessToastNotificationQuestion();
                     if (task.Result == 1)
                         QUESTION_CURRENT_STATUS = 1;
                     else if(task.Result == 0)
                         QUESTION_CURRENT_STATUS = 0;
+                    else if (task.Result == -1)
+                        QUESTION_CURRENT_STATUS = -1;
                 }
                 if (QUESTION_CURRENT_STATUS == 1)
                 {
@@ -291,9 +261,8 @@ namespace ToastFish.PushControl
             {
                 ToastNotificationManagerCompat.History.Clear();
                 Word CurrentWord = Query.GetRandomWord(RandomList);
-                PushOneQuestion(CurrentWord);
-
                 QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex) - 1;
+                PushOneQuestion(CurrentWord);
                 QUESTION_CURRENT_STATUS = 2;
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
@@ -316,13 +285,15 @@ namespace ToastFish.PushControl
                     .AddText("错误, 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()])
                     .AddText(CurrentWord.explain)
                     .Show();
-                    Thread.Sleep(8000);
+                    Thread.Sleep(7000);
                 }
             }
             
             PushMessage("结束了！恭喜！");
         }
-
+        /// <summary>
+        /// 推送一条通知
+        /// </summary>
         public static void PushMessage(string Message, string Buttom = "")
         {
             if (Buttom != "")
@@ -341,6 +312,10 @@ namespace ToastFish.PushControl
                 .Show();
         }
 
+        /// <summary>
+        /// 推送一个单词
+        /// </summary>
+        /// <param name="CurrentWord"></param>
         public static void PushOneWord(Word CurrentWord)
         {
             ToastNotificationManagerCompat.History.Clear();
@@ -372,11 +347,6 @@ namespace ToastFish.PushControl
                 .SetContent("发音")
                 .AddArgument("action", "UK")
                 .SetBackgroundActivation())
-
-            //.AddButton(new ToastButton()
-            //    .SetContent("美音")
-            //    .AddArgument("action", "US")
-            //    .SetBackgroundActivation())
             .Show();
         }
 
@@ -415,6 +385,10 @@ namespace ToastFish.PushControl
 
         }
 
+
+        /// <summary>
+        /// 推送翻译问题
+        /// </summary>
         public static void PushOneTransQuestion(Word CurrentWord, string B, string C)
         {
             string Question = CurrentWord.tranCN;
