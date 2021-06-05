@@ -75,17 +75,18 @@ namespace ToastFish
         }
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            this.Activate();
-            this.WindowState = WindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.Topmost = true;
-            this.Show();
+            //this.Activate();
+            //this.WindowState = WindowState.Normal;
+            //this.ShowInTaskbar = true;
+            //this.Topmost = true;
+            //this.Show();
         }
 
         #region 托盘右键菜单
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem GotoHtml = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
         private new void ContextMenu()
@@ -102,7 +103,10 @@ namespace ToastFish
             SetNumber.Click += new EventHandler(SetNumber_Click);
 
             SelectBook.Text = "选择词汇";
-            
+
+            GotoHtml.Text = "使用说明";
+            GotoHtml.Click += new EventHandler(HowToUse_Click);
+
             exitMenuItem.Text = "退出";
             exitMenuItem.Click += new EventHandler(ExitApp_Click);
 
@@ -136,11 +140,16 @@ namespace ToastFish
             Level8_1.Click += new EventHandler(Level8_1_Click);
             ToolStripItem Level8luan_2 = new ToolStripMenuItem("专八核心词汇");
             Level8luan_2.Click += new EventHandler(Level8luan_2_Click);
+            ToolStripItem Pdf = new ToolStripMenuItem("支持开发者");
+            Pdf.Click += new EventHandler(OpenPdf_Click);
+            ToolStripItem Use = new ToolStripMenuItem("使用说明");
+            Use.Click += new EventHandler(HowToUse_Click);
             CET4_1.PerformClick();
 
             Cms.Items.Add(Begin);
             Cms.Items.Add(SetNumber);
             Cms.Items.Add(SelectBook);
+            Cms.Items.Add(GotoHtml);
             Cms.Items.Add(exitMenuItem);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_3);
@@ -157,6 +166,8 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4luan_2);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Pdf);
         }
 
         private void Begin_Click(object sender, EventArgs e)
@@ -182,7 +193,6 @@ namespace ToastFish
         {
             Thread thread = new Thread(new ThreadStart(PushWords.SetWordNumber));
             thread.Start();
-            //PushWords.SetWordNumber();
         }
 
         private void Level8luan_2_Click(object sender, EventArgs e)
@@ -303,6 +313,15 @@ namespace ToastFish
             Select.TableName = "CET4_1";
             List<int> res = se.SelectCount();
             PushWords.PushMessage("当前词库：四级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+        }
+
+        private void HowToUse_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://lab.magiconch.com/toast-fish/");
+        }
+        private void OpenPdf_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(".\\Resources\\Star.pdf");
         }
         private void ExitApp_Click(object sender, EventArgs e)
         {

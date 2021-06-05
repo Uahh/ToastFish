@@ -18,7 +18,7 @@ namespace ToastFish.Model.SqliteControl
         public static string TableName = "CET4_1";
 
         SQLiteConnection DataBase;
-        IEnumerable<Word> WordList;
+        IEnumerable<Word> AllWordList;
         IEnumerable<BookCount> CountList;
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace ToastFish.Model.SqliteControl
         public void SelectWordList()
         {
             Word Temp = new Word();
-            WordList = DataBase.Query<Word>("select * from " + TableName, Temp);
+            AllWordList = DataBase.Query<Word>("select * from " + TableName, Temp);
         }
 
         /// <summary>
@@ -95,21 +95,27 @@ namespace ToastFish.Model.SqliteControl
         {
             List<Word> Result = new List<Word>();
             SelectWordList();
-            var WordArray = WordList.ToArray();
-            List<int> RandomList = new List<int>();
-            foreach(var Word in WordList)
+            var AllWordArray = AllWordList.ToArray();
+
+            //把所有没背过的单词序号都存在WordList里了
+            List<int> WordList = new List<int>();
+            foreach(var Word in AllWordList)
             {
                 if(Word.status == 0) //单词是否背过
                 {
-                    RandomList.Add(Word.wordRank);
+                    WordList.Add(Word.wordRank);
                 }
             }
 
+            if (WordList.Count() < Number)
+                Number = WordList.Count();
             Random Rd = new Random();
             for (int i = 0; i < Number; i++)
             {
-                int Index = Rd.Next(RandomList.Count);
-                Result.Add(WordArray[Index]);
+                int Index = Rd.Next(WordList.Count);
+                if (Number != 2)
+                    WordList.Remove(Index);
+                Result.Add(AllWordArray[Index]);
             }
 
             return Result;

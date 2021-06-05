@@ -173,10 +173,17 @@ namespace ToastFish.PushControl
         {
             Select Query = new Select();
             List<Word> RandomList = Query.GetRandomWordList((int)Number);
+            if(RandomList.Count == 0)
+            {
+                PushMessage("整个词库都背完了？你就是摸鱼之王！");
+                return;
+            }
             List<Word> CopyList = Clone<Word>(RandomList);
+            Word CurrentWord = new Word();
             while (CopyList.Count != 0)
             {
-                Word CurrentWord = Query.GetRandomWord(CopyList);
+                if(WORD_CURRENT_STATUS != 3)
+                    CurrentWord = Query.GetRandomWord(CopyList);
                 PushOneWord(CurrentWord);
 
                 WORD_CURRENT_STATUS = 2;
@@ -193,7 +200,7 @@ namespace ToastFish.PushControl
                     }
                     else if (task.Result == 2)
                     {
-                        WORD_CURRENT_STATUS = 0;
+                        WORD_CURRENT_STATUS = 3;
                         SpeechSynthesizer synth = new SpeechSynthesizer();
                         synth.SpeakAsync(CurrentWord.headWord);
                     }
@@ -219,7 +226,7 @@ namespace ToastFish.PushControl
             while (CopyList.Count != 0)
             {
                 ToastNotificationManagerCompat.History.Clear();
-                Word CurrentWord = Query.GetRandomWord(CopyList);
+                CurrentWord = Query.GetRandomWord(CopyList);
                 List<Word> FakeWordList = Query.GetRandomWordList(2);
 
                 PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
@@ -235,6 +242,7 @@ namespace ToastFish.PushControl
                     else if (task.Result == -1)
                         QUESTION_CURRENT_STATUS = -1;
                 }
+                
                 if (QUESTION_CURRENT_STATUS == 1)
                 {
                     CopyList.Remove(CurrentWord);
@@ -260,9 +268,10 @@ namespace ToastFish.PushControl
             while (RandomList.Count != 0)
             {
                 ToastNotificationManagerCompat.History.Clear();
-                Word CurrentWord = Query.GetRandomWord(RandomList);
+                CurrentWord = Query.GetRandomWord(RandomList);
                 QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex) - 1;
                 PushOneQuestion(CurrentWord);
+
                 QUESTION_CURRENT_STATUS = 2;
                 while (QUESTION_CURRENT_STATUS == 2)
                 {
@@ -280,15 +289,15 @@ namespace ToastFish.PushControl
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
-                    RandomList.Remove(CurrentWord);
+                    //RandomList.Remove(CurrentWord);
                     new ToastContentBuilder()
                     .AddText("错误, 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()])
                     .AddText(CurrentWord.explain)
                     .Show();
-                    Thread.Sleep(7000);
+                    Thread.Sleep(8000);
                 }
             }
-            
+            ToastNotificationManagerCompat.History.Clear();
             PushMessage("结束了！恭喜！");
         }
         /// <summary>
@@ -359,27 +368,27 @@ namespace ToastFish.PushControl
             string D = CurrentWord.choiceIndexFour;
 
             new ToastContentBuilder()
-            .AddText("Question")
+            .AddText("选择题")
             .AddText(Question)
             
             .AddButton(new ToastButton()
                 .SetContent(A)
-                .AddArgument("action", "1")
+                .AddArgument("action", "0")
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
                 .SetContent(B)
-                .AddArgument("action", "2")
+                .AddArgument("action", "1")
                 .SetBackgroundActivation())
             
             .AddButton(new ToastButton()
                 .SetContent(C)
-                .AddArgument("action", "3")
+                .AddArgument("action", "2")
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
                 .SetContent(D)
-                .AddArgument("action", "4")
+                .AddArgument("action", "3")
                 .SetBackgroundActivation())
             .Show();
 
@@ -401,8 +410,7 @@ namespace ToastFish.PushControl
             if (AnswerIndex == 0)
             {
                 new ToastContentBuilder()
-               .AddText("翻译")
-               .AddText(Question)
+               .AddText("翻译\n" + Question)
 
                .AddButton(new ToastButton()
                    .SetContent("A." + A)
@@ -424,8 +432,7 @@ namespace ToastFish.PushControl
             else if (AnswerIndex == 1)
             {
                new ToastContentBuilder()
-              .AddText("Question")
-              .AddText(Question)
+               .AddText("翻译\n" + Question)
 
               .AddButton(new ToastButton()
                   .SetContent("A." + B)
@@ -446,8 +453,7 @@ namespace ToastFish.PushControl
             else if (AnswerIndex == 2)
             {
                new ToastContentBuilder()
-              .AddText("Question")
-              .AddText(Question)
+               .AddText("翻译\n" + Question)
 
               .AddButton(new ToastButton()
                   .SetContent("A." + C)
