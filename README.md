@@ -24,7 +24,7 @@
 
 请至网盘下载
 ```bash
-链接：https://pan.baidu.com/s/1WJRfUnJpt4IymO0vStmi7w 
+链接：https://pan.baidu.com/s/1VlnJSSbEgcNErV-gy3um6w
 提取码：2173 
 ```
 下载后解压，运行ToastFish.exe即可。
