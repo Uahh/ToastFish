@@ -175,7 +175,7 @@ namespace ToastFish.PushControl
             List<Word> RandomList = Query.GetRandomWordList((int)Number);
             if(RandomList.Count == 0)
             {
-                PushMessage("整个词库都背完了？你就是摸鱼之王！");
+                PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
                 return;
             }
             List<Word> CopyList = Clone<Word>(RandomList);
@@ -226,8 +226,9 @@ namespace ToastFish.PushControl
             while (CopyList.Count != 0)
             {
                 ToastNotificationManagerCompat.History.Clear();
+                Thread.Sleep(500);
                 CurrentWord = Query.GetRandomWord(CopyList);
-                List<Word> FakeWordList = Query.GetRandomWordList(2);
+                List<Word> FakeWordList = Query.GetTwoRandomWords();
 
                 PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
 
@@ -294,7 +295,7 @@ namespace ToastFish.PushControl
                     .AddText("错误, 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()])
                     .AddText(CurrentWord.explain)
                     .Show();
-                    Thread.Sleep(8000);
+                    Thread.Sleep(6000);
                 }
             }
             ToastNotificationManagerCompat.History.Clear();

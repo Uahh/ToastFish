@@ -6,16 +6,12 @@
         xmlns:local="clr-namespace:ToastFish"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator},Path=Main}"
-        Title="ToastFish v1.3" Height="200" Width="409.5">
+        Title="ToastFish v1.4" Height="210" Width="500">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="200"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.ColumnSpan="1"/>
-
-        <TextBlock Text="可以去Github上提issuse,提出意见建议." Height="30" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,30,0,0" />
-        <TextBlock Text="https://github.com/Uahh/ToastFish" Height="30" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,60,0,0" />
-        <TextBlock Text="如果能点个星星那真是感激不尽." Height="30" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,90,0,0" />
+        <TextBlock Text="BUG反馈，和软件更新群：560844819" Height="30" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,30,0,0" />
+        <TextBlock Text="也可以去Github上提issuse，提出意见建议。" Height="30" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,60,0,0" />
+        <TextBlock Text="https://github.com/Uahh/ToastFish" Height="30" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,90,0,0" />
+        <TextBlock Text="如果能点个星星那真是感激不尽。" Height="30" FontSize="20" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,120,0,0" />
         <!--<Button Command="{Binding Push}" Content="Push"/>-->
     </Grid>
 </Window>

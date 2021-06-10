@@ -12,6 +12,7 @@ using System.Threading;
 using ToastFish.Model.Mp3;
 using ToastFish.Model.Download;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace ToastFish
 {
@@ -75,11 +76,11 @@ namespace ToastFish
         }
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            //this.Activate();
-            //this.WindowState = WindowState.Normal;
-            //this.ShowInTaskbar = true;
-            //this.Topmost = true;
-            //this.Show();
+            this.Activate();
+            this.WindowState = WindowState.Normal;
+            this.ShowInTaskbar = true;
+            this.Topmost = true;
+            this.Show();
         }
 
         #region 托盘右键菜单
@@ -87,7 +88,7 @@ namespace ToastFish
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem GotoHtml = new System.Windows.Forms.ToolStripMenuItem();
-        System.Windows.Forms.ToolStripMenuItem exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
         private new void ContextMenu()
         {
@@ -107,8 +108,8 @@ namespace ToastFish
             GotoHtml.Text = "使用说明";
             GotoHtml.Click += new EventHandler(HowToUse_Click);
 
-            exitMenuItem.Text = "退出";
-            exitMenuItem.Click += new EventHandler(ExitApp_Click);
+            ExitMenuItem.Text = "退出";
+            ExitMenuItem.Click += new EventHandler(ExitApp_Click);
 
             ToolStripItem CET4_1 = new ToolStripMenuItem("四级核心词汇");
             CET4_1.Click += new EventHandler(CET4_1_Click);
@@ -150,7 +151,7 @@ namespace ToastFish
             Cms.Items.Add(SetNumber);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(GotoHtml);
-            Cms.Items.Add(exitMenuItem);
+            Cms.Items.Add(ExitMenuItem);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_3);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_1);
@@ -169,6 +170,7 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Use);
             ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Pdf);
         }
+
 
         private void Begin_Click(object sender, EventArgs e)
         {

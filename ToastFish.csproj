@@ -67,14 +67,12 @@
     <Compile Include="Model\Mp3\PlayMp3.cs" />
     <Compile Include="Model\PushControl\PushWords.cs" />
     <Compile Include="Model\SqliteControl\Select.cs" />
-    <Compile Include="Model\TestModel.cs" />
     <Compile Include="Resources\IconChika.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IconChika.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\ToastFishModel.cs" />
-    <Compile Include="ViewModel\TestViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="View\ToastFish.xaml">
       <Generator>MSBuild:Compile</Generator>

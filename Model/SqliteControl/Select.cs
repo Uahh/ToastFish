@@ -46,8 +46,7 @@ namespace ToastFish.Model.SqliteControl
         {
             SQLiteCommand Update = DataBase.CreateCommand();
             Update.CommandText = "UPDATE " + TableName + " SET status = 1 WHERE wordRank = " + WordRank;
-            int a = Update.ExecuteNonQuery();
-            a = 1;
+            Update.ExecuteNonQuery();
         }
 
         public void UpdateCount()
@@ -95,7 +94,7 @@ namespace ToastFish.Model.SqliteControl
         {
             List<Word> Result = new List<Word>();
             SelectWordList();
-            var AllWordArray = AllWordList.ToArray();
+            var AllWordArray = AllWordList.ToList();
 
             //把所有没背过的单词序号都存在WordList里了
             List<int> WordList = new List<int>();
@@ -107,17 +106,36 @@ namespace ToastFish.Model.SqliteControl
                 }
             }
 
-            if (WordList.Count() < Number)
+            if (WordList.Count() == 0)
+                return Result;
+            else if (WordList.Count() < Number)
                 Number = WordList.Count();
+
             Random Rd = new Random();
             for (int i = 0; i < Number; i++)
             {
-                int Index = Rd.Next(WordList.Count);
-                if (Number != 2)
-                    WordList.Remove(Index);
+                int Index = Rd.Next(WordList.Count);//下标
+                //if (Number != 2)
+                //    WordList.Remove(Index);
                 Result.Add(AllWordArray[Index]);
+                AllWordArray.RemoveAt(Index);
             }
+            return Result;
+        }
 
+        public List<Word> GetTwoRandomWords()
+        {
+            List<Word> Result = new List<Word>();
+            SelectWordList();
+            var AllWordArray = AllWordList.ToList();
+
+            Random Rd = new Random();
+            for (int i = 0; i < 2; i++)
+            {
+                int Index = Rd.Next(AllWordArray.Count);//下标
+                Result.Add(AllWordArray[Index]);
+                AllWordArray.RemoveAt(Index);
+            }
             return Result;
         }
 
