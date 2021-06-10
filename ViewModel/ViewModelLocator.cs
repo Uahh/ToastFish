@@ -30,7 +30,6 @@ namespace ToastFish.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             SimpleIoc.Default.Register<ToastFishModel>();
-            SimpleIoc.Default.Register<TestViewModel>();
         }
 
         public ToastFishModel Main
@@ -39,19 +38,6 @@ namespace ToastFish.ViewModel
             {
                 return ServiceLocator.Current.GetInstance<ToastFishModel>();
             }
-        }
-
-        public TestViewModel Test
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<TestViewModel>();
-            }
-        }
-
-        public static void Cleanup()
-        {
-            // TODO Clear the ViewModels
         }
     }
 }
