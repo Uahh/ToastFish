@@ -10,9 +10,7 @@ using System.Windows.Forms;
 using ToastFish.Model.SqliteControl;
 using System.Threading;
 using ToastFish.Model.Mp3;
-using ToastFish.Model.Download;
 using System.Diagnostics;
-using Microsoft.Win32;
 
 namespace ToastFish
 {
@@ -81,6 +79,10 @@ namespace ToastFish
             this.ShowInTaskbar = true;
             this.Topmost = true;
             this.Show();
+
+            //MUSIC temp = new MUSIC();
+            //temp.FileName = @"D:\WPF_Project\ToastFish\Resources\Goin\a.mp3";
+            //temp.play();
         }
 
         #region 托盘右键菜单
