@@ -1,7 +1,7 @@
 using GalaSoft.MvvmLight;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
-using ToastFish.PushControl;
+using ToastFish.Model.PushControl;
 using ToastFish.Model.Download;
 using ToastFish.Model.Mp3;
 using ToastFish.ViewModel;

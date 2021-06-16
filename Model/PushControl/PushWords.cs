@@ -6,26 +6,27 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
-using ToastFish.Model.Download;
 using ToastFish.Model.Mp3;
 using System.Threading;
 using System.Speech.Synthesis;
 
-namespace ToastFish.PushControl
+namespace ToastFish.Model.PushControl
 {
     class PushWords
     {
         // 当前推送单词的状态
-        public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态，
-        public static int WORD_NUMBER = 10;
-        public static string WORD_NUMBER_STRING = "";
-        public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;
-        public static int QUESTION_CURRENT_STATUS = 0;
+        public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态
+        public static int WORD_NUMBER = 10;  // 单词数量
+        public static string WORD_NUMBER_STRING = "";  // 设置的单词数量
+        public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;  // 当前问题的答案
+        public static int QUESTION_CURRENT_STATUS = 0;  // 问题的回答状态
         public static Dictionary<string, string> AnswerDict = new Dictionary<string, string> {
             {"0","A"},{"1","B"},{"2","C"},{"3","D"}
         };
-        //public static DownloadMp3 Download = new DownloadMp3();
 
+        /// <summary>
+        /// 判断字符串是否为数字
+        /// </summary>
         public static bool IsNumber(string str)
         {
             char[] ch = new char[str.Length];
@@ -38,8 +39,15 @@ namespace ToastFish.PushControl
             return true;
         }
 
+        public static Word GetRandomWord(List<Word> WordList)
+        {
+            Random Rd = new Random();
+            int Index = Rd.Next(WordList.Count);
+            return WordList[Index];
+        }
+
         /// <summary>
-        /// 推送单词Task
+        /// 推送单词的Task
         /// </summary>
         public static Task<int> ProcessToastNotificationRecitation()
         {
@@ -64,13 +72,9 @@ namespace ToastFish.PushControl
                 {
                     tcs.TrySetResult(1);
                 }
-                else if (Status == "UK")
+                else if (Status == "voice")
                 {
                     tcs.TrySetResult(2);
-                }
-                else if (Status == "US")
-                {
-                    tcs.TrySetResult(3);
                 }
                 else
                 {
@@ -79,7 +83,10 @@ namespace ToastFish.PushControl
             };
             return tcs.Task;
         }
-
+        
+        /// <summary>
+        /// 推送问题的Task
+        /// </summary>
         public static Task<int> ProcessToastNotificationQuestion()
         {
             var tcs = new TaskCompletionSource<int>();
@@ -96,7 +103,6 @@ namespace ToastFish.PushControl
                 {
                     tcs.TrySetResult(-1);
                 }
-                //string temp = QUESTION_CURRENT_RIGHT_ANSWER.ToString();
                 if (Status == QUESTION_CURRENT_RIGHT_ANSWER.ToString())
                 {
                     tcs.TrySetResult(1);
@@ -109,6 +115,9 @@ namespace ToastFish.PushControl
             return tcs.Task;
         }
 
+        /// <summary>
+        /// 设置单词数量的Task
+        /// </summary>
         public static Task<int> ProcessToastNotificationSetNumber()
         {
             var tcs = new TaskCompletionSource<int>();
@@ -138,6 +147,9 @@ namespace ToastFish.PushControl
             return tcs.Task;
         }
 
+        /// <summary>
+        /// 设置单词数量
+        /// </summary>
         public static void SetWordNumber()
         {
             new ToastContentBuilder()
@@ -169,6 +181,9 @@ namespace ToastFish.PushControl
             } 
         }
 
+        /// <summary>
+        /// 背诵单词
+        /// </summary>
         public static void Recitation(Object Number)
         {
             Select Query = new Select();
@@ -183,7 +198,7 @@ namespace ToastFish.PushControl
             while (CopyList.Count != 0)
             {
                 if(WORD_CURRENT_STATUS != 3)
-                    CurrentWord = Query.GetRandomWord(CopyList);
+                    CurrentWord = GetRandomWord(CopyList);
                 PushOneWord(CurrentWord);
 
                 WORD_CURRENT_STATUS = 2;
@@ -213,10 +228,11 @@ namespace ToastFish.PushControl
                 }
             }
             PushMessage("背完了！接下来开始测验！");
-            // 背诵结束
+            Thread.Sleep(3000);
+
+            /* 背诵结束 */
 
             CopyList = Clone<Word>(RandomList);
-
             for (int i = CopyList.Count - 1; i >= 0; i--)
             {
                 if (CopyList[i].question != null)
@@ -227,7 +243,7 @@ namespace ToastFish.PushControl
             {
                 ToastNotificationManagerCompat.History.Clear();
                 Thread.Sleep(500);
-                CurrentWord = Query.GetRandomWord(CopyList);
+                CurrentWord = GetRandomWord(CopyList);
                 List<Word> FakeWordList = Query.GetTwoRandomWords();
 
                 PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
@@ -269,7 +285,7 @@ namespace ToastFish.PushControl
             while (RandomList.Count != 0)
             {
                 ToastNotificationManagerCompat.History.Clear();
-                CurrentWord = Query.GetRandomWord(RandomList);
+                CurrentWord = GetRandomWord(RandomList);
                 QUESTION_CURRENT_RIGHT_ANSWER = int.Parse(CurrentWord.rightIndex) - 1;
                 PushOneQuestion(CurrentWord);
 
@@ -301,6 +317,7 @@ namespace ToastFish.PushControl
             ToastNotificationManagerCompat.History.Clear();
             PushMessage("结束了！恭喜！");
         }
+
         /// <summary>
         /// 推送一条通知
         /// </summary>
@@ -355,11 +372,14 @@ namespace ToastFish.PushControl
             
             .AddButton(new ToastButton()
                 .SetContent("发音")
-                .AddArgument("action", "UK")
+                .AddArgument("action", "voice")
                 .SetBackgroundActivation())
             .Show();
         }
 
+        /// <summary>
+        /// 推送一道选择题
+        /// </summary>
         public static void PushOneQuestion(Word CurrentWord)
         {
             string Question = CurrentWord.question;
@@ -394,7 +414,6 @@ namespace ToastFish.PushControl
             .Show();
 
         }
-
 
         /// <summary>
         /// 推送翻译问题

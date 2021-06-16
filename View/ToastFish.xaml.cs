@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using ToastFish.PushControl;
 using ToastFish.ViewModel;
 using ToastFish.Resources;
 using System.Windows.Forms;
@@ -11,6 +10,7 @@ using ToastFish.Model.SqliteControl;
 using System.Threading;
 using ToastFish.Model.Mp3;
 using System.Diagnostics;
+using ToastFish.Model.PushControl;
 
 namespace ToastFish
 {
@@ -86,9 +86,11 @@ namespace ToastFish
         }
 
         #region 托盘右键菜单
+
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem SelectJpBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem GotoHtml = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
@@ -105,7 +107,9 @@ namespace ToastFish
             SetNumber.Text = "设置单词个数";
             SetNumber.Click += new EventHandler(SetNumber_Click);
 
-            SelectBook.Text = "选择词汇";
+            SelectBook.Text = "英语词汇";
+
+            SelectJpBook.Text = "日语词汇";
 
             GotoHtml.Text = "使用说明";
             GotoHtml.Click += new EventHandler(HowToUse_Click);
@@ -143,6 +147,8 @@ namespace ToastFish
             Level8_1.Click += new EventHandler(Level8_1_Click);
             ToolStripItem Level8luan_2 = new ToolStripMenuItem("专八核心词汇");
             Level8luan_2.Click += new EventHandler(Level8luan_2_Click);
+            ToolStripItem Goin = new ToolStripMenuItem("顺序五十音");
+            Goin.Click += new EventHandler(Goin_Click);
             ToolStripItem Pdf = new ToolStripMenuItem("支持开发者");
             Pdf.Click += new EventHandler(OpenPdf_Click);
             ToolStripItem Use = new ToolStripMenuItem("使用说明");
@@ -152,6 +158,7 @@ namespace ToastFish
             Cms.Items.Add(Begin);
             Cms.Items.Add(SetNumber);
             Cms.Items.Add(SelectBook);
+            Cms.Items.Add(SelectJpBook);
             Cms.Items.Add(GotoHtml);
             Cms.Items.Add(ExitMenuItem);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
@@ -169,10 +176,10 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4luan_2);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Use);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Pdf);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Goin);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Pdf);
         }
-
 
         private void Begin_Click(object sender, EventArgs e)
         {
@@ -184,11 +191,18 @@ namespace ToastFish
                 {
                     Thread.Sleep(100);
                 }
-                thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                if(Select.TableName == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.OrderGoin));
+                else
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 thread.Start(PushWords.WORD_NUMBER);
             }
             else
             {
+                if (Select.TableName == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.OrderGoin));
+                else
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 thread.Start(PushWords.WORD_NUMBER);
             }
         }
@@ -197,6 +211,14 @@ namespace ToastFish
         {
             Thread thread = new Thread(new ThreadStart(PushWords.SetWordNumber));
             thread.Start();
+        }
+
+        private void Goin_Click(object sender, EventArgs e)
+        {
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            Select.TableName = "Goin";
+            int Progress = se.GetGoinProgress();
+            PushWords.PushMessage("当前词库：五十音\n当前进度：" + Progress.ToString() + "/104");
         }
 
         private void Level8luan_2_Click(object sender, EventArgs e)

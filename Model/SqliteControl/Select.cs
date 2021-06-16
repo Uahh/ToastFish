@@ -17,9 +17,14 @@ namespace ToastFish.Model.SqliteControl
 
         public static string TableName = "CET4_1";
 
-        SQLiteConnection DataBase;
-        IEnumerable<Word> AllWordList;
-        IEnumerable<BookCount> CountList;
+        public SQLiteConnection DataBase;
+        public IEnumerable<Word> AllWordList;
+        //public IEnumerable<GoinWord> AllGoinWordList;
+        public IEnumerable<BookCount> CountList;
+
+        /*****************
+         * 英语部分
+         *****************/
 
         /// <summary>
         /// 连接数据库
@@ -49,6 +54,9 @@ namespace ToastFish.Model.SqliteControl
             Update.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// 更新CountTable的单词记录
+        /// </summary>
         public void UpdateCount()
         {
             BookCount Temp = new BookCount();
@@ -66,6 +74,9 @@ namespace ToastFish.Model.SqliteControl
             }
         }
 
+        /// <summary>
+        /// 查询当前单词表当前进度
+        /// </summary>
         public List<int> SelectCount()
         {
             BookCount Temp = new BookCount();
@@ -106,7 +117,7 @@ namespace ToastFish.Model.SqliteControl
                 }
             }
 
-            if (WordList.Count() == 0)
+            if (WordList.Count() == 0)  
                 return Result;
             else if (WordList.Count() < Number)
                 Number = WordList.Count();
@@ -123,6 +134,9 @@ namespace ToastFish.Model.SqliteControl
             return Result;
         }
 
+        /// <summary>
+        /// 获取俩随机单词，作为错误答案
+        /// </summary>
         public List<Word> GetTwoRandomWords()
         {
             List<Word> Result = new List<Word>();
@@ -139,11 +153,23 @@ namespace ToastFish.Model.SqliteControl
             return Result;
         }
 
-        public Word GetRandomWord(List<Word> WordList)
+        /*****************
+         * 英语部分结束
+         *****************/
+
+        public List<GoinWord> GetGainWordList()
         {
-            Random Rd = new Random();
-            int Index = Rd.Next(WordList.Count);
-            return WordList[Index];
+            GoinWord Temp = new GoinWord();
+            IEnumerable<GoinWord> AllGoinWordList = DataBase.Query<GoinWord>("select * from " + TableName, Temp);
+            return AllGoinWordList.ToList();
+        }
+
+        public int GetGoinProgress()
+        {
+            BookCount Temp = new BookCount();
+            CountList = DataBase.Query<BookCount>("select * from Count where bookName = 'Goin'", Temp);
+            var CountArray = CountList.ToList();
+            return CountArray[0].current;
         }
     }
 
@@ -173,11 +199,24 @@ namespace ToastFish.Model.SqliteControl
         public String phrase { get; set; }
         public String phraseCN { get; set; }
     }
-
+    
+    [Serializable]
     public class BookCount
     {
         public String bookName { get; set; }
         public int number { get; set; }
         public int current { get; set; }
+    }
+    
+    [Serializable]
+    public class GoinWord
+    {
+        public int wordRank { get; set; }
+        public string bookId { get; set; }
+        public int status { get; set; }
+        public string romaji { get; set; }
+        public string hiragana { get; set; }
+        public string katakana { get; set; }
+
     }
 }
