@@ -66,8 +66,11 @@ namespace ToastFish.Model.SqliteControl
             {
                 if(OneCount.bookName == TableName)
                 {
+                    int Count = OneCount.current + 1;
+                    if (OneCount.bookName == "Goin")
+                        Count %= 104;
                     SQLiteCommand Update = DataBase.CreateCommand();
-                    Update.CommandText = "UPDATE Count SET current = " + (OneCount.current + 1).ToString() + " WHERE bookName = '" + TableName + "'";
+                    Update.CommandText = "UPDATE Count SET current = " + Count.ToString() + " WHERE bookName = '" + TableName + "'";
                     int a = Update.ExecuteNonQuery();
                     break;
                 }
@@ -170,6 +173,26 @@ namespace ToastFish.Model.SqliteControl
             CountList = DataBase.Query<BookCount>("select * from Count where bookName = 'Goin'", Temp);
             var CountArray = CountList.ToList();
             return CountArray[0].current;
+        }
+
+        public List<GoinWord> GetTwoGoinRandomWords(GoinWord CurrentWord)
+        {
+            List<GoinWord> Result = new List<GoinWord>();
+            List<GoinWord> WordList = GetGainWordList();
+
+            Random Rd = new Random();
+            for (int i = 0; i < 2; i++)
+            {
+                int Index = Rd.Next(WordList.Count);//下标
+                if(CurrentWord.wordRank == Index + 1)
+                {
+                    i--;
+                    continue;
+                }
+                Result.Add(WordList[Index]);
+                WordList.RemoveAt(Index);
+            }
+            return Result;
         }
     }
 

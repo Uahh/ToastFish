@@ -352,8 +352,9 @@ namespace ToastFish
         private void ExitApp_Click(object sender, EventArgs e)
         {
             ToastNotificationManagerCompat.History.Clear();
-            vm.notifyIcon.Visible = false;
-            System.Windows.Application.Current.Shutdown();
+            //vm.notifyIcon.Visible = false;
+            //System.Windows.Application.Current.Shutdown();
+            Environment.Exit(0);
         }
         #endregion
 
