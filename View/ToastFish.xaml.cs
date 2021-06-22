@@ -11,6 +11,7 @@ using System.Threading;
 using ToastFish.Model.Mp3;
 using System.Diagnostics;
 using ToastFish.Model.PushControl;
+using MP3Sharp;
 
 namespace ToastFish
 {
@@ -24,13 +25,13 @@ namespace ToastFish
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         public MainWindow()
         {
-
             Form1_Load();
             InitializeComponent();
             this.DataContext = vm;
             SetNotifyIcon();
             this.Closing += Window_Closing;
             ContextMenu();
+            PlayMute();
 
             this.WindowState = (WindowState)FormWindowState.Minimized;
         }
@@ -72,16 +73,24 @@ namespace ToastFish
             vm.notifyIcon.Visible = true;
             vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
         }
+
+        public void PlayMute()
+        {
+            MUSIC temp = new MUSIC();
+            temp.FileName = ".\\Resources\\mute.mp3";
+            temp.play();
+        }
+
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            this.Activate();
-            this.WindowState = WindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.Topmost = true;
-            this.Show();
-
+            //this.Activate();
+            //this.WindowState = WindowState.Normal;
+            //this.ShowInTaskbar = true;
+            //this.Topmost = true;
+            //this.Show();
+            PlayMute();
             //MUSIC temp = new MUSIC();
-            //temp.FileName = @"D:\WPF_Project\ToastFish\Resources\Goin\a.mp3";
+            //temp.FileName = ".\\Resources\\Goin\\a.mp3";
             //temp.play();
         }
 
