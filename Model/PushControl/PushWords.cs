@@ -6,7 +6,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
-using ToastFish.Model.Mp3;
 using System.Threading;
 using System.Speech.Synthesis;
 
@@ -16,7 +15,6 @@ namespace ToastFish.Model.PushControl
     {
         // 当前推送单词的状态
         public static int WORD_CURRENT_STATUS = 0;  // 背单词时候的状态
-        public static int WORD_NUMBER = 10;  // 单词数量
         public static string WORD_NUMBER_STRING = "";  // 设置的单词数量
         public static int QUESTION_CURRENT_RIGHT_ANSWER = -1;  // 当前问题的答案
         public static int QUESTION_CURRENT_STATUS = 0;  // 问题的回答状态
@@ -175,7 +173,9 @@ namespace ToastFish.Model.PushControl
             {
                 if(IsNumber(WORD_NUMBER_STRING))
                 {
-                    WORD_NUMBER = int.Parse(WORD_NUMBER_STRING);
+                    Select.WORD_NUMBER = int.Parse(WORD_NUMBER_STRING);
+                    Select Temp = new Select();
+                    Temp.UpdateNumber(Select.WORD_NUMBER);
                     PushMessage("已设置单词数量为：" + WORD_NUMBER_STRING);
                 }
             } 
@@ -184,7 +184,7 @@ namespace ToastFish.Model.PushControl
         /// <summary>
         /// 背诵单词
         /// </summary>
-        public static void Recitation(Object Number)
+        public static  void Recitation(Object Number)
         {
             Select Query = new Select();
             List<Word> RandomList = Query.GetRandomWordList((int)Number);
@@ -244,7 +244,7 @@ namespace ToastFish.Model.PushControl
                 ToastNotificationManagerCompat.History.Clear();
                 Thread.Sleep(500);
                 CurrentWord = GetRandomWord(CopyList);
-                List<Word> FakeWordList = Query.GetTwoRandomWords();
+                List<Word> FakeWordList = Query.GetRandomWords(2);
 
                 PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
 
@@ -263,8 +263,7 @@ namespace ToastFish.Model.PushControl
                 if (QUESTION_CURRENT_STATUS == 1)
                 {
                     CopyList.Remove(CurrentWord);
-                    PushMessage("正确,太强了吧！");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(500);
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
@@ -301,8 +300,7 @@ namespace ToastFish.Model.PushControl
                 if (QUESTION_CURRENT_STATUS == 1)
                 {
                     RandomList.Remove(CurrentWord);
-                    PushMessage("正确,太强了吧！");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(500);
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)
                 {
@@ -312,6 +310,53 @@ namespace ToastFish.Model.PushControl
                     .AddText(CurrentWord.explain)
                     .Show();
                     Thread.Sleep(6000);
+                }
+            }
+            ToastNotificationManagerCompat.History.Clear();
+            PushMessage("结束了！恭喜！");
+        }
+
+        public static void UnorderWord(Object Num)
+        {
+            int Number = (int)Num;
+            Select Query = new Select();
+            List<Word> TestList = Query.GetRandomWords(Number);
+
+            Word CurrentWord = new Word();
+
+            while (TestList.Count != 0)
+            {
+                ToastNotificationManagerCompat.History.Clear();
+                Thread.Sleep(500);
+                CurrentWord = GetRandomWord(TestList);
+                List<Word> FakeWordList = Query.GetRandomWords(2);
+
+                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
+
+                QUESTION_CURRENT_STATUS = 2;
+                while (QUESTION_CURRENT_STATUS == 2)
+                {
+                    var task = ProcessToastNotificationQuestion();
+                    if (task.Result == 1)
+                        QUESTION_CURRENT_STATUS = 1;
+                    else if (task.Result == 0)
+                        QUESTION_CURRENT_STATUS = 0;
+                    else if (task.Result == -1)
+                        QUESTION_CURRENT_STATUS = -1;
+                }
+
+                if (QUESTION_CURRENT_STATUS == 1)
+                {
+                    TestList.Remove(CurrentWord);
+                    Thread.Sleep(500);
+                }
+                else if (QUESTION_CURRENT_STATUS == 0)
+                {
+                    //CopyList.Remove(CurrentWord);
+                    new ToastContentBuilder()
+                    .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
+                    .Show();
+                    Thread.Sleep(3000);
                 }
             }
             ToastNotificationManagerCompat.History.Clear();

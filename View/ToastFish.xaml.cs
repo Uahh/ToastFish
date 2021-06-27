@@ -12,6 +12,7 @@ using ToastFish.Model.Mp3;
 using System.Diagnostics;
 using ToastFish.Model.PushControl;
 using MP3Sharp;
+using System.Speech.Synthesis;
 
 namespace ToastFish
 {
@@ -25,18 +26,19 @@ namespace ToastFish
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         public MainWindow()
         {
-            Form1_Load();
+            Form_Load();
             InitializeComponent();
-            this.DataContext = vm;
+            DataContext = vm;
             SetNotifyIcon();
-            this.Closing += Window_Closing;
+            Closing += Window_Closing;
+            se.GetBookNameAndNumber();
             ContextMenu();
             PlayMute();
 
             this.WindowState = (WindowState)FormWindowState.Minimized;
         }
 
-        private void Form1_Load()
+        private void Form_Load()
 
         {
             //获取当前活动进程的模块名称
@@ -76,22 +78,18 @@ namespace ToastFish
 
         public void PlayMute()
         {
-            MUSIC temp = new MUSIC();
-            temp.FileName = ".\\Resources\\mute.mp3";
-            temp.play();
+            MUSIC Temp = new MUSIC();
+            Temp.FileName = ".\\Resources\\mute.mp3";
+            Temp.play();
         }
 
         private void NotifyIconDoubleClick(object sender, EventArgs e)
         {
-            //this.Activate();
-            //this.WindowState = WindowState.Normal;
-            //this.ShowInTaskbar = true;
-            //this.Topmost = true;
-            //this.Show();
-            PlayMute();
-            //MUSIC temp = new MUSIC();
-            //temp.FileName = ".\\Resources\\Goin\\a.mp3";
-            //temp.play();
+            this.Activate();
+            this.WindowState = WindowState.Normal;
+            this.ShowInTaskbar = true;
+            this.Topmost = true;
+            this.Show();
         }
 
         #region 托盘右键菜单
@@ -100,6 +98,8 @@ namespace ToastFish
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectJpBook = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem RandomTest = new System.Windows.Forms.ToolStripMenuItem();
+
         System.Windows.Forms.ToolStripMenuItem GotoHtml = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
@@ -120,6 +120,8 @@ namespace ToastFish
 
             SelectJpBook.Text = "日语词汇";
 
+            RandomTest.Text = "随机测试";
+
             GotoHtml.Text = "使用说明";
             GotoHtml.Click += new EventHandler(HowToUse_Click);
 
@@ -127,47 +129,88 @@ namespace ToastFish
             ExitMenuItem.Click += new EventHandler(ExitApp_Click);
 
             ToolStripItem CET4_1 = new ToolStripMenuItem("四级核心词汇");
-            CET4_1.Click += new EventHandler(CET4_1_Click);
+            CET4_1.Click += new EventHandler(SelectBook_Click);
             ToolStripItem CET4_3 = new ToolStripMenuItem("四级完整词汇");
-            CET4_3.Click += new EventHandler(CET4_3_Click);
+            CET4_3.Click += new EventHandler(SelectBook_Click);
             ToolStripItem CET6_1 = new ToolStripMenuItem("六级核心词汇");
-            CET6_1.Click += new EventHandler(CET6_1_Click);
+            CET6_1.Click += new EventHandler(SelectBook_Click);
             ToolStripItem CET6_3 = new ToolStripMenuItem("六级完整词汇");
-            CET6_3.Click += new EventHandler(CET6_3_Click);
+            CET6_3.Click += new EventHandler(SelectBook_Click);
             ToolStripItem GMAT_3 = new ToolStripMenuItem("GMAT词汇");
-            GMAT_3.Click += new EventHandler(GMAT_3_Click);
+            GMAT_3.Click += new EventHandler(SelectBook_Click);
             ToolStripItem GRE_2 = new ToolStripMenuItem("GRE词汇");
-            GRE_2.Click += new EventHandler(GRE_2_Click);
+            GRE_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem IELTS_3 = new ToolStripMenuItem("IELTS词汇");
-            IELTS_3.Click += new EventHandler(IELTS_3_Click);
+            IELTS_3.Click += new EventHandler(SelectBook_Click);
             ToolStripItem TOEFL_2 = new ToolStripMenuItem("TOEFL词汇");
-            TOEFL_2.Click += new EventHandler(TOEFL_2_Click);
+            TOEFL_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem SAT_2 = new ToolStripMenuItem("SAT词汇");
-            SAT_2.Click += new EventHandler(SAT_2_Click);
+            SAT_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem KaoYan_1 = new ToolStripMenuItem("考研必考词汇");
-            KaoYan_1.Click += new EventHandler(KaoYan_1_Click);
+            KaoYan_1.Click += new EventHandler(SelectBook_Click);
             ToolStripItem KaoYan_2 = new ToolStripMenuItem("考研完整词汇");
-            KaoYan_2.Click += new EventHandler(KaoYan_2_Click);
+            KaoYan_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem Level4_1 = new ToolStripMenuItem("专四真题高频词");
-            Level4_1.Click += new EventHandler(Level4_1_Click);
+            Level4_1.Click += new EventHandler(SelectBook_Click);
             ToolStripItem Level4luan_2 = new ToolStripMenuItem("专四核心词汇");
-            Level4luan_2.Click += new EventHandler(Level4luan_2_Click);
+            Level4luan_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem Level8_1 = new ToolStripMenuItem("专八真题高频词");
-            Level8_1.Click += new EventHandler(Level8_1_Click);
+            Level8_1.Click += new EventHandler(SelectBook_Click);
             ToolStripItem Level8luan_2 = new ToolStripMenuItem("专八核心词汇");
-            Level8luan_2.Click += new EventHandler(Level8luan_2_Click);
+            Level8luan_2.Click += new EventHandler(SelectBook_Click);
             ToolStripItem Goin = new ToolStripMenuItem("顺序五十音");
-            Goin.Click += new EventHandler(Goin_Click);
-            ToolStripItem Pdf = new ToolStripMenuItem("支持开发者");
+            Goin.Click += new EventHandler(SelectBook_Click);
+            ToolStripItem StdJp_Mid = new ToolStripMenuItem("标准日本语中级词汇");
+            StdJp_Mid.Click += new EventHandler(SelectBook_Click);
+            ToolStripItem RandomWord = new ToolStripMenuItem("随机单词测试");
+            RandomWord.Click += new EventHandler(RandomWordTest_Click);
+            ToolStripItem RandomGoin = new ToolStripMenuItem("随机五十音测试");
+            RandomGoin.Click += new EventHandler(RandomGoinTest_Click);
+            ToolStripItem RandomJpWord = new ToolStripMenuItem("随机日语单词测试");
+            RandomJpWord.Click += new EventHandler(RandomJpWordTest_Click);
+            ToolStripItem Pdf = new ToolStripMenuItem("Star!!");
             Pdf.Click += new EventHandler(OpenPdf_Click);
             ToolStripItem Use = new ToolStripMenuItem("使用说明");
             Use.Click += new EventHandler(HowToUse_Click);
-            CET4_1.PerformClick();
+
+            if (Select.TABLE_NAME == "CET4_1")
+                CET4_1.PerformClick();
+            else if (Select.TABLE_NAME == "CET4_3")
+                CET4_3.PerformClick();
+            else if (Select.TABLE_NAME == "CET6_1")
+                CET6_1.PerformClick();
+            else if (Select.TABLE_NAME == "CET6_3")
+                CET6_3.PerformClick();
+            else if (Select.TABLE_NAME == "GMAT_3")
+                GMAT_3.PerformClick();
+            else if (Select.TABLE_NAME == "GRE_2")
+                GRE_2.PerformClick();
+            else if (Select.TABLE_NAME == "IELTS_3")
+                IELTS_3.PerformClick();
+            else if (Select.TABLE_NAME == "TOEFL_2")
+                TOEFL_2.PerformClick();
+            else if (Select.TABLE_NAME == "SAT_2")
+                SAT_2.PerformClick();
+            else if (Select.TABLE_NAME == "KaoYan_1")
+                KaoYan_1.PerformClick();
+            else if (Select.TABLE_NAME == "KaoYan_2")
+                KaoYan_2.PerformClick();
+            else if (Select.TABLE_NAME == "Level4_1")
+                Level4_1.PerformClick();
+            else if (Select.TABLE_NAME == "Level4luan_2")
+                Level4luan_2.PerformClick();
+            else if (Select.TABLE_NAME == "Level8_1")
+                Level8_1.PerformClick();
+            else if (Select.TABLE_NAME == "Level8luan_2")
+                Level8luan_2.PerformClick();
+            else if (Select.TABLE_NAME == "Goin")
+                Goin.PerformClick();
 
             Cms.Items.Add(Begin);
             Cms.Items.Add(SetNumber);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(SelectJpBook);
+            Cms.Items.Add(RandomTest);
             Cms.Items.Add(GotoHtml);
             Cms.Items.Add(ExitMenuItem);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
@@ -186,8 +229,12 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
             ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
             ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Goin);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Use);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Pdf);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(StdJp_Mid);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomWord);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomGoin);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomJpWord);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Pdf);
         }
 
         private void Begin_Click(object sender, EventArgs e)
@@ -200,19 +247,23 @@ namespace ToastFish
                 {
                     Thread.Sleep(100);
                 }
-                if(Select.TableName == "Goin")
-                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.OrderGoin));
+                if(Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
+                else if(Select.TABLE_NAME == "StdJp_Mid")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-                thread.Start(PushWords.WORD_NUMBER);
+                thread.Start(Select.WORD_NUMBER);
             }
             else
             {
-                if (Select.TableName == "Goin")
-                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.OrderGoin));
+                if (Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
+                else if (Select.TABLE_NAME == "StdJp_Mid")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-                thread.Start(PushWords.WORD_NUMBER);
+                thread.Start(Select.WORD_NUMBER);
             }
         }
 
@@ -222,132 +273,127 @@ namespace ToastFish
             thread.Start();
         }
 
-        private void Goin_Click(object sender, EventArgs e)
+        private void SelectBook_Click(object sender, EventArgs e)
         {
             //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Goin";
-            int Progress = se.GetGoinProgress();
-            PushWords.PushMessage("当前词库：五十音\n当前进度：" + Progress.ToString() + "/104");
+            string TempName = "";
+            if (sender.ToString() == "四级核心词汇")
+                TempName = "CET4_1";
+            else if (sender.ToString() == "四级完整词汇")
+                TempName = "CET4_3";
+            else if (sender.ToString() == "六级核心词汇")
+                TempName = "CET6_1";
+            else if (sender.ToString() == "六级完整词汇")
+                TempName = "CET6_3";
+            else if (sender.ToString() == "GMAT词汇")
+                TempName = "GMAT_3";
+            else if (sender.ToString() == "GRE词汇")
+                TempName = "GRE_2";
+            else if (sender.ToString() == "IELTS词汇")
+                TempName = "IELTS_3";
+            else if (sender.ToString() == "TOEFL词汇")
+                TempName = "TOEFL_2";
+            else if (sender.ToString() == "SAT词汇")
+                TempName = "SAT_2";
+            else if (sender.ToString() == "考研必考词汇")
+                TempName = "KaoYan_1";
+            else if (sender.ToString() == "考研完整词汇")
+                TempName = "KaoYan_2";
+            else if (sender.ToString() == "专四真题高频词")
+                TempName = "Level4_1";
+            else if (sender.ToString() == "专四核心词汇")
+                TempName = "Level4luan_2";
+            else if (sender.ToString() == "专八真题高频词")
+                TempName = "Level8_1";
+            else if (sender.ToString() == "专八核心词汇")
+                TempName = "Level8luan_2";
+            else if (sender.ToString() == "顺序五十音")
+                TempName = "Goin";
+            else if (sender.ToString() == "标准日本语中级词汇")
+            {
+                TempName = "StdJp_Mid";
+                bool Flag = false;
+                SpeechSynthesizer synth = new SpeechSynthesizer();
+                foreach (InstalledVoice voice in synth.GetInstalledVoices())
+                {
+                    VoiceInfo info = voice.VoiceInfo;
+                    if (info.Culture.IetfLanguageTag == "ja-JP")
+                        Flag = true;
+                }
+                if(Flag == false)
+                    System.Windows.Forms.MessageBox.Show("监测到您未安装日语语音包，请去“设置”->“时间和语言”->“语音”->“添加语音”中安装日本语，以免影响正常使用。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (sender.ToString() == "随机五十音测试")
+                TempName = "Goin";
+            Select.TABLE_NAME = TempName;
+            se.UpdateBookName(TempName);
+            if (sender.ToString() == "顺序五十音")
+            {
+                int Progress = se.GetGoinProgress();
+                PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + Progress.ToString() + "/104");
+            }
+            else
+            {
+                List<int> res = se.SelectCount();
+                PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+            }
         }
 
-        private void Level8luan_2_Click(object sender, EventArgs e)
+        private void RandomWordTest_Click(object sender, EventArgs e)
         {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Level8luan_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：专八核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+            var state = thread.ThreadState;
+            if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
+            {
+                thread.Abort();
+                while (thread.ThreadState != System.Threading.ThreadState.Aborted)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            if (Select.TABLE_NAME == "StdJp_Mid")
+                Select.TABLE_NAME = "CET4_1";
+            thread = new Thread(new ParameterizedThreadStart(PushWords.UnorderWord));
+            thread.Start(Select.WORD_NUMBER);
         }
 
-        private void Level8_1_Click(object sender, EventArgs e)
+        private void RandomGoinTest_Click(object sender, EventArgs e)
         {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Level8_1";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：专八真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+            Select.TABLE_NAME = "Goin";
+            se.UpdateBookName("Goin");
+            var state = thread.ThreadState;
+            if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
+            {
+                thread.Abort();
+                while (thread.ThreadState != System.Threading.ThreadState.Aborted)
+                {
+                    Thread.Sleep(100);
+                }
+                if (Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.UnorderGoin));
+                thread.Start(Select.WORD_NUMBER);
+            }
+            else
+            {
+                if (Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.UnorderGoin));
+                thread.Start(Select.WORD_NUMBER);
+            }
         }
 
-        private void Level4luan_2_Click(object sender, EventArgs e)
+        private void RandomJpWordTest_Click(object sender, EventArgs e)
         {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Level4luan_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：专四核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void Level4_1_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "Level4_1";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：专四真题高频词\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void KaoYan_2_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "KaoYan_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：考研完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void KaoYan_1_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "KaoYan_1";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：考研必考词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void SAT_2_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "SAT_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：SAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void TOEFL_2_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "TOEFL_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：TOEFL词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void IELTS_3_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "IELTS_3";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：IELTS词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void GRE_2_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "GRE_2";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：GRE词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void GMAT_3_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "GMAT_3";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：GMAT词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void CET6_3_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "CET6_3";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：六级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void CET6_1_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "CET6_1";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：六级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void CET4_3_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "CET4_3";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：四级完整词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-        }
-
-        private void CET4_1_Click(object sender, EventArgs e)
-        {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
-            Select.TableName = "CET4_1";
-            List<int> res = se.SelectCount();
-            PushWords.PushMessage("当前词库：四级核心词汇\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+            var state = thread.ThreadState;
+            if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
+            {
+                thread.Abort();
+                while (thread.ThreadState != System.Threading.ThreadState.Aborted)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            Select.TABLE_NAME = "StdJp_Mid";
+            thread = new Thread(new ParameterizedThreadStart(PushJpWords.UnorderWord));
+            thread.Start(Select.WORD_NUMBER);
         }
 
         private void HowToUse_Click(object sender, EventArgs e)
@@ -361,8 +407,6 @@ namespace ToastFish
         private void ExitApp_Click(object sender, EventArgs e)
         {
             ToastNotificationManagerCompat.History.Clear();
-            //vm.notifyIcon.Visible = false;
-            //System.Windows.Application.Current.Shutdown();
             Environment.Exit(0);
         }
         #endregion

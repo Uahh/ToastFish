@@ -15,17 +15,14 @@ namespace ToastFish.Model.SqliteControl
             DataBase.Open();
         }
 
-        public static string TableName = "CET4_1";
-
+        public static string TABLE_NAME = "CET4_1";  // 当前书籍名字
+        public static int WORD_NUMBER = 10;  // 当前单词数量
         public SQLiteConnection DataBase;
         public IEnumerable<Word> AllWordList;
-        //public IEnumerable<GoinWord> AllGoinWordList;
+        public IEnumerable<JpWord> AllJpWordList;
         public IEnumerable<BookCount> CountList;
 
-        /*****************
-         * 英语部分
-         *****************/
-
+        #region 更新与链接
         /// <summary>
         /// 连接数据库
         /// </summary>
@@ -36,21 +33,12 @@ namespace ToastFish.Model.SqliteControl
         }
 
         /// <summary>
-        /// 查找某本书的所有单词
-        /// </summary>
-        public void SelectWordList()
-        {
-            Word Temp = new Word();
-            AllWordList = DataBase.Query<Word>("select * from " + TableName, Temp);
-        }
-
-        /// <summary>
         /// 标记单词已背过
         /// </summary>
         public void UpdateWord(int WordRank)
         {
             SQLiteCommand Update = DataBase.CreateCommand();
-            Update.CommandText = "UPDATE " + TableName + " SET status = 1 WHERE wordRank = " + WordRank;
+            Update.CommandText = "UPDATE " + TABLE_NAME + " SET status = 1 WHERE wordRank = " + WordRank;
             Update.ExecuteNonQuery();
         }
 
@@ -62,19 +50,41 @@ namespace ToastFish.Model.SqliteControl
             BookCount Temp = new BookCount();
             CountList = DataBase.Query<BookCount>("select * from Count", Temp);
             var CountArray = CountList.ToArray();
-            foreach(var OneCount in CountArray)
+            foreach (var OneCount in CountArray)
             {
-                if(OneCount.bookName == TableName)
+                if (OneCount.bookName == TABLE_NAME)
                 {
                     int Count = OneCount.current + 1;
                     if (OneCount.bookName == "Goin")
                         Count %= 104;
                     SQLiteCommand Update = DataBase.CreateCommand();
-                    Update.CommandText = "UPDATE Count SET current = " + Count.ToString() + " WHERE bookName = '" + TableName + "'";
-                    int a = Update.ExecuteNonQuery();
+                    Update.CommandText = "UPDATE Count SET current = " + Count.ToString() + " WHERE bookName = '" + TABLE_NAME + "'";
+                    Update.ExecuteNonQuery();
                     break;
                 }
             }
+        }
+
+        public void GetBookNameAndNumber()
+        {
+            Global Temp = new Global();
+            var GlobalVariable = DataBase.Query<Global>("select * from Global", Temp).ToArray();
+            TABLE_NAME = GlobalVariable[0].currentBookName;
+            WORD_NUMBER = int.Parse(GlobalVariable[0].currentWordNumber);
+        }
+
+        public void UpdateBookName(string TableName)
+        {
+            SQLiteCommand Update = DataBase.CreateCommand();
+            Update.CommandText = "UPDATE Global SET currentBookName = '" + TableName + "'";
+            Update.ExecuteNonQuery();
+        }
+
+        public void UpdateNumber(int WordNumber)
+        {
+            SQLiteCommand Update = DataBase.CreateCommand();
+            Update.CommandText = "UPDATE Global SET currentWordNumber = " + WordNumber.ToString();
+            Update.ExecuteNonQuery();
         }
 
         /// <summary>
@@ -88,7 +98,7 @@ namespace ToastFish.Model.SqliteControl
             List<int> Output = new List<int>();
             foreach (var OneCount in CountArray)
             {
-                if (OneCount.bookName == TableName)
+                if (OneCount.bookName == TABLE_NAME)
                 {
                     Output.Add(OneCount.current);
                     Output.Add(OneCount.number);
@@ -96,6 +106,17 @@ namespace ToastFish.Model.SqliteControl
                 }
             }
             return Output;
+        }
+        #endregion
+
+        #region 英语部分
+        /// <summary>
+        /// 查找某本书的所有单词
+        /// </summary>
+        public void SelectWordList()
+        {
+            Word Temp = new Word();
+            AllWordList = DataBase.Query<Word>("select * from " + TABLE_NAME, Temp);
         }
 
         /// <summary>
@@ -140,14 +161,14 @@ namespace ToastFish.Model.SqliteControl
         /// <summary>
         /// 获取俩随机单词，作为错误答案
         /// </summary>
-        public List<Word> GetTwoRandomWords()
+        public List<Word> GetRandomWords(int Number)
         {
             List<Word> Result = new List<Word>();
             SelectWordList();
             var AllWordArray = AllWordList.ToList();
 
             Random Rd = new Random();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < Number; i++)
             {
                 int Index = Rd.Next(AllWordArray.Count);//下标
                 Result.Add(AllWordArray[Index]);
@@ -155,15 +176,80 @@ namespace ToastFish.Model.SqliteControl
             }
             return Result;
         }
+        #endregion
 
-        /*****************
-         * 英语部分结束
-         *****************/
+        #region 日语部分
+        /// <summary>
+        /// 查找某本书的所有单词
+        /// </summary>
+        public void SelectJpWordList()
+        {
+            JpWord Temp = new JpWord();
+            AllJpWordList = DataBase.Query<JpWord>("select * from " + TABLE_NAME, Temp);
+        }
 
+        /// <summary>
+        /// 从词库里随机选择Number个单词
+        /// </summary>
+        /// <typeparam name="List<Word>"></typeparam>
+        /// <param name="Number"></param>
+        /// <returns></returns>
+        public List<JpWord> GetRandomJpWordList(int Number)
+        {
+            List<JpWord> Result = new List<JpWord>();
+            SelectJpWordList();
+            var AllWordArray = AllJpWordList.ToList();
+
+            //把所有没背过的单词序号都存在WordList里了
+            List<int> WordList = new List<int>();
+            foreach (var JpWord in AllJpWordList)
+            {
+                if (JpWord.status == 0) //单词是否背过
+                {
+                    WordList.Add(JpWord.wordRank);
+                }
+            }
+
+            if (WordList.Count() == 0)
+                return Result;
+            else if (WordList.Count() < Number)
+                Number = WordList.Count();
+
+            Random Rd = new Random();
+            for (int i = 0; i < Number; i++)
+            {
+                int Index = Rd.Next(WordList.Count);//下标
+                Result.Add(AllWordArray[Index]);
+                AllWordArray.RemoveAt(Index);
+            }
+            return Result;
+        }
+
+        /// <summary>
+        /// 获取俩随机单词，作为错误答案
+        /// </summary>
+        public List<JpWord> GetRandomJpWords(int Number)
+        {
+            List<JpWord> Result = new List<JpWord>();
+            SelectJpWordList();
+            var AllWordArray = AllJpWordList.ToList();
+
+            Random Rd = new Random();
+            for (int i = 0; i < Number; i++)
+            {
+                int Index = Rd.Next(AllWordArray.Count);//下标
+                Result.Add(AllWordArray[Index]);
+                AllWordArray.RemoveAt(Index);
+            }
+            return Result;
+        }
+        #endregion
+
+        #region 五十音部分
         public List<GoinWord> GetGainWordList()
         {
             GoinWord Temp = new GoinWord();
-            IEnumerable<GoinWord> AllGoinWordList = DataBase.Query<GoinWord>("select * from " + TableName, Temp);
+            IEnumerable<GoinWord> AllGoinWordList = DataBase.Query<GoinWord>("select * from " + TABLE_NAME, Temp);
             return AllGoinWordList.ToList();
         }
 
@@ -194,8 +280,10 @@ namespace ToastFish.Model.SqliteControl
             }
             return Result;
         }
+        #endregion
     }
 
+    #region 查询类
     [Serializable]
     public class Word
     {
@@ -242,4 +330,26 @@ namespace ToastFish.Model.SqliteControl
         public string katakana { get; set; }
 
     }
+
+    [Serializable]
+    public class Global
+    {
+        public string currentWordNumber { get; set; }
+        public string currentBookName { get; set; }
+
+    }
+
+    [Serializable]
+    public class JpWord
+    {
+        public int wordRank { get; set; }
+        public string bookId { get; set; }
+        public int status { get; set; }
+        public String headWord { get; set; }
+        public int Phone { get; set; }
+        public String tranCN { get; set; }
+        public String pos { get; set; }
+        public String hiragana { get; set; }
+    }
+    #endregion
 }
