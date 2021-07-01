@@ -188,13 +188,12 @@ namespace ToastFish.Model.PushControl
             PushMessage("背完了！接下来开始测验！");
             Thread.Sleep(3000);
 
-            /* 背诵结束 */
 
-            while (CopyList.Count != 0)
+            while (RandomList.Count != 0)
             {
                 ToastNotificationManagerCompat.History.Clear();
                 Thread.Sleep(500);
-                CurrentWord = GetRandomWord(CopyList);
+                CurrentWord = GetRandomWord(RandomList);
                 List<JpWord> FakeWordList = Query.GetRandomJpWords(2);
 
                 PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
@@ -213,7 +212,7 @@ namespace ToastFish.Model.PushControl
 
                 if (QUESTION_CURRENT_STATUS == 1)
                 {
-                    CopyList.Remove(CurrentWord);
+                    RandomList.Remove(CurrentWord);
                     Thread.Sleep(500);
                 }
                 else if (QUESTION_CURRENT_STATUS == 0)

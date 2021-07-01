@@ -350,7 +350,7 @@ namespace ToastFish
                     Thread.Sleep(100);
                 }
             }
-            if (Select.TABLE_NAME == "StdJp_Mid")
+            if (Select.TABLE_NAME == "StdJp_Mid" || Select.TABLE_NAME == "Goin")
                 Select.TABLE_NAME = "CET4_1";
             thread = new Thread(new ParameterizedThreadStart(PushWords.UnorderWord));
             thread.Start(Select.WORD_NUMBER);
