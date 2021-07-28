@@ -29,7 +29,7 @@ jobs:
 
     # Setup MSBuild.exe
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@2008f912f56e61277eefaac6d1888b750582aa16
+      uses: microsoft/setup-msbuild@v1.0.2
 
     # Setup NuGet
     - name: Setup NuGet
