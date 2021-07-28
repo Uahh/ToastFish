@@ -1,0 +1,71 @@
+name: .NET Core Desktop
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    # Install .NET Core
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.202
+
+    # Setup MSBuild.exe
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Setup NuGet
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NuGetAPIKey }}
+        nuget-version: '5.x'
+
+    # NuGet restore
+    - name: NuGet restore
+      run: nuget restore
+
+    # Build
+    - name: Build the solution
+      run: msbuild /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    # Execute unit tests
+    - name: Execute unit tests
+      run: dotnet test -c $env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+      
+    # Upload bin directory
+    - name: Upload bin directory
+      uses: actions/upload-artifact@main
+      if: ${{ success() }}
+      with:
+        name: ToastFish_Build
+        path: ./bin/Release/
+    
+    # Delete workflow runs
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 7
+        keep_minimum_runs: 3
+
