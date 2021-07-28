@@ -57,10 +57,10 @@ jobs:
     # Upload bin directory
     - name: Upload bin directory
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success'
+      #if: steps.compile.outputs.status == 'success'
       with:
         name: ToastFish_Build
-        path: ToastFish
+        path: path/to/artifact/
     
     # Delete workflow runs
     - name: Delete workflow runs
