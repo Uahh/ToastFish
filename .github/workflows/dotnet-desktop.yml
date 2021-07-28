@@ -60,7 +60,7 @@ jobs:
       if: ${{ success() }}
       with:
         name: ToastFish_Build
-        path: ToastFish/
+        path: ./
     
     # Delete workflow runs
     - name: Delete workflow runs
