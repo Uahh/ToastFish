@@ -57,10 +57,12 @@ jobs:
     # Upload bin directory
     - name: Upload bin directory
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      if: steps.compile.outputs.status == 'success'
       with:
-        name: ToastFish_${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        name: ToastFish_Build
         path: ToastFish
+      env:
+        Configuration: Release
     
     # Delete workflow runs
     - name: Delete workflow runs
@@ -68,13 +70,4 @@ jobs:
       with:
         retain_days: 7
         keep_minimum_runs: 3
-        
-    # Remove old Releases
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 3
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
