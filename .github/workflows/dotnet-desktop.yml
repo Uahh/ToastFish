@@ -60,15 +60,11 @@ jobs:
       if: ${{ success() }}
       with:
         name: ToastFish_Build
-<<<<<<< HEAD
         path: ./bin/Release/
-=======
-        path: ToastFish
->>>>>>> 5c47d35 (Update dotnet-desktop.yml)
     
     # Delete workflow runs
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
       with:
         retain_days: 7
-        keep_minimum_runs: 3s
+        keep_minimum_runs: 3
