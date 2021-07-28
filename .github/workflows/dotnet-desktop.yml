@@ -96,7 +96,7 @@ jobs:
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      run: dotnet pack --configuration Release
+      run: MSBuild.exe ToastFish.sln -p:Configuration="Release"
       shell: pwsh
       
     # Upload bin directory
