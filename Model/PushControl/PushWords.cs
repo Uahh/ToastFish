@@ -8,6 +8,7 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
 using System.Threading;
 using System.Speech.Synthesis;
+using ToastFish.Model.Log;
 
 namespace ToastFish.Model.PushControl
 {
@@ -37,6 +38,9 @@ namespace ToastFish.Model.PushControl
             return true;
         }
 
+        /// <summary>
+        /// 从List中获取一个随机单词
+        /// </summary>
         public static Word GetRandomWord(List<Word> WordList)
         {
             Random Rd = new Random();
@@ -188,7 +192,9 @@ namespace ToastFish.Model.PushControl
         {
             Select Query = new Select();
             List<Word> RandomList = Query.GetRandomWordList((int)Number);
-            if(RandomList.Count == 0)
+            CreateLog Log = new CreateLog();
+            Log.OutputExcel("outfile.xlsx", RandomList);
+            if (RandomList.Count == 0)
             {
                 PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
                 return;
@@ -553,7 +559,6 @@ namespace ToastFish.Model.PushControl
                 objStream.Seek(0, SeekOrigin.Begin);
                 return (List<Word>)formatter.Deserialize(objStream);
             }
-
         }
     }
 }

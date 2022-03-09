@@ -11,7 +11,7 @@ using System.Threading;
 using ToastFish.Model.Mp3;
 using System.Diagnostics;
 using ToastFish.Model.PushControl;
-using MP3Sharp;
+using ToastFish.Model.Log;
 using System.Speech.Synthesis;
 
 namespace ToastFish

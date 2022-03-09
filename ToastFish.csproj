@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Log\CreateLog.cs" />
     <Compile Include="Model\Mp3\DownloadMp3.cs" />
     <Compile Include="Model\Mp3\PlayMp3.cs" />
     <Compile Include="Model\PushControl\PushGoinWords.cs" />
@@ -142,6 +143,9 @@
     </PackageReference>
     <PackageReference Include="MvvmLight">
       <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="NPOI">
+      <Version>2.5.5</Version>
     </PackageReference>
     <PackageReference Include="Prism.Core">
       <Version>8.0.0.1909</Version>
