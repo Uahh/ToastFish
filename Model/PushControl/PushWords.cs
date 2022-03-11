@@ -193,7 +193,9 @@ namespace ToastFish.Model.PushControl
             Select Query = new Select();
             List<Word> RandomList = Query.GetRandomWordList((int)Number);
             CreateLog Log = new CreateLog();
-            Log.OutputExcel("outfile.xlsx", RandomList);
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_英语.xlsx";
+            Log.OutputExcel(LogName, RandomList, "英语");
+            //Log.ImportExcel("outfile.xlsx");
             if (RandomList.Count == 0)
             {
                 PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
@@ -327,6 +329,10 @@ namespace ToastFish.Model.PushControl
             int Number = (int)Num;
             Select Query = new Select();
             List<Word> TestList = Query.GetRandomWords(Number);
+
+            CreateLog Log = new CreateLog();
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_随机英语单词.xlsx";
+            Log.OutputExcel(LogName, TestList, "英语");
 
             Word CurrentWord = new Word();
 

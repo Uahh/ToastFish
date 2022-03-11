@@ -239,6 +239,8 @@ namespace ToastFish
 
         private void Begin_Click(object sender, EventArgs e)
         {
+            System.IO.Directory.CreateDirectory("Log");
+
             var state = thread.ThreadState;
             if(state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
             {

@@ -9,6 +9,7 @@ using ToastFish.Model.SqliteControl;
 using ToastFish.Model.Mp3;
 using System.Threading;
 using System.Speech.Synthesis;
+using ToastFish.Model.Log;
 
 namespace ToastFish.Model.PushControl
 {
@@ -94,8 +95,11 @@ namespace ToastFish.Model.PushControl
             List<GoinWord> GoinList = Query.GetGainWordList();
             int GoinProgress = Query.GetGoinProgress();
             int Limit = GoinProgress + Number;
-
             List<GoinWord> TestList = new List<GoinWord>();
+
+            CreateLog Log = new CreateLog();
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_五十音.xlsx";
+            Log.OutputExcel(LogName, GoinList, "五十音");
 
             GoinWord CurrentWord = new GoinWord();
             while (GoinProgress < Limit)
@@ -127,7 +131,6 @@ namespace ToastFish.Model.PushControl
                 if (WORD_CURRENT_STATUS == 1)
                 {
                     TestList.Add(CurrentWord);
-                    //Query.UpdateWord(CurrentWord.wordRank);
                     Query.UpdateCount();
                     GoinProgress += 1;
                 }
@@ -203,13 +206,17 @@ namespace ToastFish.Model.PushControl
             int Number = (int)Num;
             Select Query = new Select();
             List<GoinWord> TestList = Query.GetGainWordList();
-            int Limit = TestList.Count - Number;
-            while(TestList.Count > Number)
+
+            while (TestList.Count > Number)
             {
                 Random Rd = new Random();
                 int Index = Rd.Next(TestList.Count);
                 TestList.RemoveAt(Index);
             }
+
+            CreateLog Log = new CreateLog();
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_随机五十音.xlsx";
+            Log.OutputExcel(LogName, TestList, "五十音");
 
             GoinWord CurrentWord = new GoinWord();
             while (TestList.Count != 0)

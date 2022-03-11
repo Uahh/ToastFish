@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Speech.Synthesis;
 using System.Threading;
+using ToastFish.Model.Log;
 
 namespace ToastFish.Model.PushControl
 {
@@ -144,6 +145,11 @@ namespace ToastFish.Model.PushControl
                 return;
             }
             List<JpWord> CopyList = Clone<JpWord>(RandomList);
+
+            CreateLog Log = new CreateLog();
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_日语.xlsx";
+            Log.OutputExcel(LogName, RandomList, "日语");
+            
             JpWord CurrentWord = new JpWord();
             while (CopyList.Count != 0)
             {
@@ -234,6 +240,10 @@ namespace ToastFish.Model.PushControl
             int Number = (int)Num;
             Select Query = new Select();
             List<JpWord> TestList = Query.GetRandomJpWords(Number);
+
+            CreateLog Log = new CreateLog();
+            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_随机日语单词.xlsx";
+            Log.OutputExcel(LogName, TestList, "日语");
 
             JpWord CurrentWord = new JpWord();
 

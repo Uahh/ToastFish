@@ -129,15 +129,15 @@ namespace ToastFish.Model.SqliteControl
         {
             List<Word> Result = new List<Word>();
             SelectWordList();
-            var AllWordArray = AllWordList.ToList();
+            //var AllWordArray = AllWordList.ToList();
 
             //把所有没背过的单词序号都存在WordList里了
-            List<int> WordList = new List<int>();
+            List<Word> WordList = new List<Word>();
             foreach(var Word in AllWordList)
             {
                 if(Word.status == 0) //单词是否背过
                 {
-                    WordList.Add(Word.wordRank);
+                    WordList.Add(Word);
                 }
             }
 
@@ -150,10 +150,8 @@ namespace ToastFish.Model.SqliteControl
             for (int i = 0; i < Number; i++)
             {
                 int Index = Rd.Next(WordList.Count);//下标
-                //if (Number != 2)
-                //    WordList.Remove(Index);
-                Result.Add(AllWordArray[Index]);
-                AllWordArray.RemoveAt(Index);
+                Result.Add(WordList[Index]);
+                WordList.RemoveAt(Index);
             }
             return Result;
         }
