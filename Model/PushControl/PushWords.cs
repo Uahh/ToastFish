@@ -188,17 +188,38 @@ namespace ToastFish.Model.PushControl
         /// <summary>
         /// 背诵单词
         /// </summary>
-        public static  void Recitation(Object Number)
+        public static void Recitation(Object Words)
         {
+            WordType WordList = (WordType)Words;
+            
             Select Query = new Select();
-            List<Word> RandomList = Query.GetRandomWordList((int)Number);
-            CreateLog Log = new CreateLog();
-            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_英语.xlsx";
-            Log.OutputExcel(LogName, RandomList, "英语");
-            //Log.ImportExcel("outfile.xlsx");
-            if (RandomList.Count == 0)
+            List<Word> RandomList;
+            bool ImportFlag = true;
+
+            if (WordList.WordList == null)
+            {
+                RandomList = Query.GetRandomWordList((int)WordList.Number);
+                ImportFlag = false;
+            }
+            else
+            {
+                RandomList = WordList.WordList;
+            }
+
+            if (ImportFlag == true)
+            {
+                CreateLog Log = new CreateLog();
+                String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_英语.xlsx";
+                Log.OutputExcel(LogName, RandomList, "英语");
+            }
+
+            if (RandomList.Count == 0 && ImportFlag == false)
             {
                 PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
+                return;
+            }
+            else if (RandomList.Count == 0 && ImportFlag == true)
+            {
                 return;
             }
             List<Word> CopyList = Clone<Word>(RandomList);
@@ -230,8 +251,11 @@ namespace ToastFish.Model.PushControl
                 }
                 if (WORD_CURRENT_STATUS == 1)
                 {
-                    Query.UpdateWord(CurrentWord.wordRank);
-                    Query.UpdateCount();
+                    if (ImportFlag == false)
+                    {
+                        Query.UpdateWord(CurrentWord.wordRank);
+                        Query.UpdateCount();
+                    }
                     CopyList.Remove(CurrentWord);
                 }
             }
@@ -243,7 +267,7 @@ namespace ToastFish.Model.PushControl
             CopyList = Clone<Word>(RandomList);
             for (int i = CopyList.Count - 1; i >= 0; i--)
             {
-                if (CopyList[i].question != null)
+                if (CopyList[i].question != null || CopyList[i].question == "")
                     CopyList.Remove(CopyList[i]);
             }
 
@@ -285,7 +309,7 @@ namespace ToastFish.Model.PushControl
 
             for (int i = RandomList.Count - 1; i >= 0; i--)
             {
-                if (RandomList[i].question == null)
+                if (RandomList[i].question == null || RandomList[i].question == "")
                     RandomList.Remove(RandomList[i]);
             }
 

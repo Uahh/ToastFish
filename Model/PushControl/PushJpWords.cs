@@ -135,20 +135,41 @@ namespace ToastFish.Model.PushControl
             }
         }
 
-        public static new void Recitation(Object Number)
+        public static new void Recitation(Object Words)
         {
+            WordType WordList = (WordType)Words;
+
             Select Query = new Select();
-            List<JpWord> RandomList = Query.GetRandomJpWordList((int)Number);
-            if (RandomList.Count == 0)
+            List<JpWord> RandomList;
+            bool ImportFlag = true;
+
+            if (WordList.JpWordList == null)
+            {
+                RandomList = Query.GetRandomJpWordList((int)WordList.Number);
+                ImportFlag = false;
+            }
+            else
+            {
+                RandomList = WordList.JpWordList;
+            }
+
+            if (RandomList.Count == 0 && ImportFlag == false)
             {
                 PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
                 return;
             }
+            else if (RandomList.Count == 0 && ImportFlag == true)
+            {
+                return;
+            }
             List<JpWord> CopyList = Clone<JpWord>(RandomList);
 
-            CreateLog Log = new CreateLog();
-            String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_日语.xlsx";
-            Log.OutputExcel(LogName, RandomList, "日语");
+            if (ImportFlag == true)
+            {
+                CreateLog Log = new CreateLog();
+                String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_日语.xlsx";
+                Log.OutputExcel(LogName, RandomList, "日语");
+            }
             
             JpWord CurrentWord = new JpWord();
             while (CopyList.Count != 0)
@@ -186,8 +207,11 @@ namespace ToastFish.Model.PushControl
                 }
                 if (WORD_CURRENT_STATUS == 1)
                 {
-                    Query.UpdateWord(CurrentWord.wordRank);
-                    Query.UpdateCount();
+                    if (ImportFlag == false)
+                    {
+                        Query.UpdateWord(CurrentWord.wordRank);
+                        Query.UpdateCount();
+                    }
                     CopyList.Remove(CurrentWord);
                 }
             }

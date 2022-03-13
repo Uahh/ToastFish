@@ -69,6 +69,7 @@
     <Compile Include="Model\PushControl\PushGoinWords.cs" />
     <Compile Include="Model\PushControl\PushJpWords.cs" />
     <Compile Include="Model\PushControl\PushWords.cs" />
+    <Compile Include="Model\PushControl\WordType.cs" />
     <Compile Include="Model\SqliteControl\Select.cs" />
     <Compile Include="Resources\IconChika.Designer.cs">
       <AutoGen>True</AutoGen>

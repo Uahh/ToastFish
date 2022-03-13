@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.SQLite;
 using Dapper;
-
+using System.Windows;
 
 namespace ToastFish.Model.SqliteControl
 {
@@ -116,7 +116,10 @@ namespace ToastFish.Model.SqliteControl
         public void SelectWordList()
         {
             Word Temp = new Word();
+            if (TABLE_NAME.IndexOf("自定义") != -1)
+                TABLE_NAME = "CET4_1";
             AllWordList = DataBase.Query<Word>("select * from " + TABLE_NAME, Temp);
+
         }
 
         /// <summary>

@@ -8,7 +8,6 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using ToastFish.Model.SqliteControl;
 using ToastFish.Model.Mp3;
 using System.Threading;
-using System.Speech.Synthesis;
 using ToastFish.Model.Log;
 
 namespace ToastFish.Model.PushControl
@@ -88,9 +87,10 @@ namespace ToastFish.Model.PushControl
             return tcs.Task;
         }
 
-        public static void OrderGoin(Object Num)
+        public static void OrderGoin(Object Words)
         {
-            int Number = (int)Num;
+            WordType WordList = (WordType)Words;
+            int Number = (int)WordList.Number;
             Select Query = new Select();
             List<GoinWord> GoinList = Query.GetGainWordList();
             int GoinProgress = Query.GetGoinProgress();

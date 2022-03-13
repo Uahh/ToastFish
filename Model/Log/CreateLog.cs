@@ -1,15 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using ToastFish.Model.SqliteControl;
 using System.Windows;
-using System.Data;
 
 namespace ToastFish.Model.Log
 {
@@ -76,7 +72,7 @@ namespace ToastFish.Model.Log
             else
             {
                 // 自定义
-                FirstLine = new List<String> { "自定义", "第一行", "第二行" };
+                FirstLine = new List<String> { "自定义", "第一行", "第二行", "第三行" };
             }
             row = sheet.CreateRow(0);
             for (int i = 0; i < FirstLine.Count; i++)
@@ -84,18 +80,21 @@ namespace ToastFish.Model.Log
                 ICell cell = row.CreateCell(i);
                 cell.SetCellValue(FirstLine[i]);
             }
+
             // 整理Cell长度
             for (int i = 0; i <= 25; i++) 
                 sheet.AutoSizeColumn(i);
+            
             // 写入文件
             using (FileStream stream = new FileStream(Path, FileMode.Create, FileAccess.Write))
             {
                 WorkBook.Write(stream);
             }
         }
-        public List<Word> ImportExcel(string path)
+        public object ImportExcel(string path)
         {
             List<Word> WordList = new List<Word>();
+            List<JpWord> JpWordList = new List<JpWord>();
             IWorkbook WorkBook;
             try
             {
@@ -128,8 +127,7 @@ namespace ToastFish.Model.Log
             if(FirstRow.GetCell(0).ToString() == "英语")
             {
                 int RowCount = Sheet.LastRowNum;
-                int CellCount = FirstRow.LastCellNum;
-                for (int i = 1; i < RowCount; i++)
+                for (int i = 1; i <= RowCount; i++)
                 {
                     IRow Row = Sheet.GetRow(i);
                     Word TempWord = new Word();
@@ -150,11 +148,35 @@ namespace ToastFish.Model.Log
                     TempWord.choiceIndexTwo = Row.GetCell(13).ToString();
                     TempWord.choiceIndexThree = Row.GetCell(14).ToString();
                     TempWord.choiceIndexFour = Row.GetCell(15).ToString();
-                    TempWord.rightIndex = Row.GetCell(16).ToString(); ;
+                    TempWord.rightIndex = Row.GetCell(16).ToString();
                     WordList.Add(TempWord);
                 }
+                return WordList;
             }
-            return WordList;
+            else if (FirstRow.GetCell(0).ToString() == "日语")
+            {
+                int RowCount = Sheet.LastRowNum;
+                int CellCount = FirstRow.LastCellNum;
+                for (int i = 1; i < RowCount; i++)
+                {
+                    IRow Row = Sheet.GetRow(i);
+                    JpWord TempWord = new JpWord();
+                    if (Row == null)
+                        continue;
+                    TempWord.headWord = Row.GetCell(1).ToString();
+                    TempWord.tranCN = Row.GetCell(2).ToString();
+                    TempWord.Phone = int.Parse(Row.GetCell(3).ToString());
+                    TempWord.hiragana = Row.GetCell(4).ToString();
+                    TempWord.pos = Row.GetCell(5).ToString();
+                    JpWordList.Add(TempWord);
+                }
+                return JpWordList;
+            }
+            else
+            {
+                MessageBox.Show("导入失败，Excel格式不正确或Excel文件损坏");
+                return null;
+            }
         }
     }
 }

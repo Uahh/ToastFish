@@ -33,6 +33,8 @@ namespace ToastFish
             Closing += Window_Closing;
             se.GetBookNameAndNumber();
             ContextMenu();
+            // 谜之bug，如果不先播放一段音频，那么什么声音都播不出来。
+            // 所以播个没声音的音频先。
             PlayMute();
 
             this.WindowState = (WindowState)FormWindowState.Minimized;
@@ -96,6 +98,7 @@ namespace ToastFish
 
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem ImportWords = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectJpBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem RandomTest = new System.Windows.Forms.ToolStripMenuItem();
@@ -115,6 +118,9 @@ namespace ToastFish
 
             SetNumber.Text = "设置单词个数";
             SetNumber.Click += new EventHandler(SetNumber_Click);
+
+            ImportWords.Text = "导入词库";
+            ImportWords.Click += new EventHandler(ImportWords_Click);
 
             SelectBook.Text = "英语词汇";
 
@@ -208,33 +214,34 @@ namespace ToastFish
 
             Cms.Items.Add(Begin);
             Cms.Items.Add(SetNumber);
+            Cms.Items.Add(ImportWords);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(SelectJpBook);
             Cms.Items.Add(RandomTest);
             Cms.Items.Add(GotoHtml);
             Cms.Items.Add(ExitMenuItem);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_3);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_1);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_3);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GMAT_3);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GRE_2);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(IELTS_3);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(TOEFL_2);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(SAT_2);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_1);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_2);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4_1);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4luan_2);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
-            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Goin);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(StdJp_Mid);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomWord);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomGoin);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomJpWord);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Use);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Pdf);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_1);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_3);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET6_1);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET6_3);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(GMAT_3);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(GRE_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(IELTS_3);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(TOEFL_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(SAT_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(KaoYan_1);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(KaoYan_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level4_1);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level4luan_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level8_1);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level8luan_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Goin);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(StdJp_Mid);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomWord);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomGoin);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomJpWord);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Pdf);
         }
 
         private void Begin_Click(object sender, EventArgs e)
@@ -242,7 +249,11 @@ namespace ToastFish
             System.IO.Directory.CreateDirectory("Log");
 
             var state = thread.ThreadState;
-            if(state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
+
+            WordType Words = new WordType();
+            Words.Number = Select.WORD_NUMBER;
+
+            if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
             {
                 thread.Abort();
                 while (thread.ThreadState != System.Threading.ThreadState.Aborted)
@@ -253,9 +264,12 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if(Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义英语")
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-                thread.Start(Select.WORD_NUMBER);
+
+                thread.Start(Words);
             }
             else
             {
@@ -263,9 +277,12 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if (Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义英语")
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-                thread.Start(Select.WORD_NUMBER);
+                
+                thread.Start(Words);
             }
         }
 
@@ -273,6 +290,65 @@ namespace ToastFish
         {
             Thread thread = new Thread(new ThreadStart(PushWords.SetWordNumber));
             thread.Start();
+        }
+
+        private void ImportWords_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog Dialog = new OpenFileDialog();
+            Dialog.Filter = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls";
+            Dialog.ShowDialog();
+            String FileName = Dialog.FileName;
+            CreateLog Log = new CreateLog();
+            WordType Words = new WordType();
+            Words.Number = Select.WORD_NUMBER;
+            try
+            {
+                List<Word> WordList = (List<Word>)Log.ImportExcel(FileName);
+                Words.WordList = WordList;
+                Select.TABLE_NAME = "自定义英语";
+            }
+            catch
+            {
+                List<JpWord> WordList = (List<JpWord>)Log.ImportExcel(FileName);
+                Words.JpWordList = WordList;
+                Select.TABLE_NAME = "StdJp_Mid";
+            }
+
+            System.IO.Directory.CreateDirectory("Log");
+
+            var state = thread.ThreadState;
+
+            if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
+            {
+                thread.Abort();
+                while (thread.ThreadState != System.Threading.ThreadState.Aborted)
+                {
+                    Thread.Sleep(100);
+                }
+                if (Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
+                else if (Select.TABLE_NAME == "StdJp_Mid")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义英语")
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                else
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+
+                thread.Start(Words);
+            }
+            else
+            {
+                if (Select.TABLE_NAME == "Goin")
+                    thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
+                else if (Select.TABLE_NAME == "StdJp_Mid")
+                    thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义英语")
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                else
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+
+                thread.Start(Words);
+            }
         }
 
         private void SelectBook_Click(object sender, EventArgs e)
@@ -323,7 +399,7 @@ namespace ToastFish
                         Flag = true;
                 }
                 if(Flag == false)
-                    System.Windows.Forms.MessageBox.Show("监测到您未安装日语语音包，请去“设置”->“时间和语言”->“语音”->“添加语音”中安装日本语，以免影响正常使用。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    System.Windows.Forms.MessageBox.Show("检测到您未安装日语语音包，请去“设置”->“时间和语言”->“语音”->“添加语音”中安装日本语，以免影响正常使用。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (sender.ToString() == "随机五十音测试")
                 TempName = "Goin";
