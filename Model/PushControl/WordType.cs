@@ -12,6 +12,7 @@ namespace ToastFish.Model.PushControl
         public int Number;
         public List<Word> WordList = null;
         public List<JpWord> JpWordList = null;
+        public List<CustomizeWord> CustWordList = null;
         public bool GoinWordList = false;
     }
 }

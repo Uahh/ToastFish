@@ -352,5 +352,14 @@ namespace ToastFish.Model.SqliteControl
         public String pos { get; set; }
         public String hiragana { get; set; }
     }
+
+    [Serializable]
+    public class CustomizeWord
+    {
+        public String firstLine { get; set; }
+        public String secondLine { get; set; }
+        public String thirdLine { get; set; }
+        public String fourthLine { get; set; }
+    }
     #endregion
 }

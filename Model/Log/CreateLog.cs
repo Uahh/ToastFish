@@ -95,6 +95,7 @@ namespace ToastFish.Model.Log
         {
             List<Word> WordList = new List<Word>();
             List<JpWord> JpWordList = new List<JpWord>();
+            List<CustomizeWord> CustWordList = new List<CustomizeWord>();
             IWorkbook WorkBook;
             try
             {
@@ -156,7 +157,6 @@ namespace ToastFish.Model.Log
             else if (FirstRow.GetCell(0).ToString() == "日语")
             {
                 int RowCount = Sheet.LastRowNum;
-                int CellCount = FirstRow.LastCellNum;
                 for (int i = 1; i < RowCount; i++)
                 {
                     IRow Row = Sheet.GetRow(i);
@@ -171,6 +171,24 @@ namespace ToastFish.Model.Log
                     JpWordList.Add(TempWord);
                 }
                 return JpWordList;
+            }
+            else if (FirstRow.GetCell(0).ToString() == "自定义")
+            {
+                int RowCount = Sheet.LastRowNum;
+                int CellCount = FirstRow.LastCellNum;
+                for (int i = 1; i < RowCount; i++)
+                {
+                    IRow Row = Sheet.GetRow(i);
+                    CustomizeWord TempWord = new CustomizeWord();
+                    if (Row == null)
+                        continue;
+                    TempWord.firstLine = Row.GetCell(1).ToString();
+                    TempWord.secondLine = Row.GetCell(2).ToString();
+                    TempWord.thirdLine = Row.GetCell(3).ToString();
+                    TempWord.fourthLine = Row.GetCell(4).ToString();
+                    CustWordList.Add(TempWord);
+                }
+                return CustWordList;
             }
             else
             {

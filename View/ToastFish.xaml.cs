@@ -119,7 +119,7 @@ namespace ToastFish
             SetNumber.Text = "设置单词个数";
             SetNumber.Click += new EventHandler(SetNumber_Click);
 
-            ImportWords.Text = "导入词库";
+            ImportWords.Text = "导入单词";
             ImportWords.Click += new EventHandler(ImportWords_Click);
 
             SelectBook.Text = "英语词汇";
@@ -264,8 +264,8 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if(Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
-                else if (Select.TABLE_NAME == "自定义英语")
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                //else if (Select.TABLE_NAME == "自定义英语")
+                //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
 
@@ -277,8 +277,8 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if (Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
-                else if (Select.TABLE_NAME == "自定义英语")
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                //else if (Select.TABLE_NAME == "自定义英语")
+                //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 
@@ -305,14 +305,26 @@ namespace ToastFish
             {
                 List<Word> WordList = (List<Word>)Log.ImportExcel(FileName);
                 Words.WordList = WordList;
-                Select.TABLE_NAME = "自定义英语";
+                Select.TABLE_NAME = "Revue Starlight!!";
             }
             catch
+            { }
+            try
             {
                 List<JpWord> WordList = (List<JpWord>)Log.ImportExcel(FileName);
                 Words.JpWordList = WordList;
                 Select.TABLE_NAME = "StdJp_Mid";
             }
+            catch
+            { }
+            try
+            {
+                List<CustomizeWord> WordList = (List<CustomizeWord>)Log.ImportExcel(FileName);
+                Words.CustWordList = WordList;
+                Select.TABLE_NAME = "自定义";
+            }
+            catch
+            { }
 
             System.IO.Directory.CreateDirectory("Log");
 
@@ -329,8 +341,10 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if (Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
-                else if (Select.TABLE_NAME == "自定义英语")
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                //else if (Select.TABLE_NAME == "自定义英语")
+                //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义")
+                    thread = new Thread(new ParameterizedThreadStart(PushCustomizeWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
 
@@ -342,8 +356,10 @@ namespace ToastFish
                     thread = new Thread(new ParameterizedThreadStart(PushGoinWords.OrderGoin));
                 else if (Select.TABLE_NAME == "StdJp_Mid")
                     thread = new Thread(new ParameterizedThreadStart(PushJpWords.Recitation));
-                else if (Select.TABLE_NAME == "自定义英语")
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                //else if (Select.TABLE_NAME == "自定义英语")
+                //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                else if (Select.TABLE_NAME == "自定义")
+                    thread = new Thread(new ParameterizedThreadStart(PushCustomizeWords.Recitation));
                 else
                     thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
 
