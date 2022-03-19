@@ -14,6 +14,7 @@ using ToastFish.Model.PushControl;
 using ToastFish.Model.Log;
 using System.Speech.Synthesis;
 using ToastFish.Model.StartWithWindows;
+using System.IO;
 
 namespace ToastFish
 {
@@ -135,6 +136,10 @@ namespace ToastFish
 
             Start.Text = "开机启动";
             Start.Click += new EventHandler(Start_Click);
+            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "ToastFish.lnk")))
+                Start.Checked = true;
+            else
+                Start.Checked = false;
 
             ExitMenuItem.Text = "退出";
             ExitMenuItem.Click += new EventHandler(ExitApp_Click);
@@ -512,10 +517,12 @@ namespace ToastFish
 
         private void Start_Click(object sender, EventArgs e)
         {
-            StartWithWindows.SetMeStart(true);
+            //StartWithWindows.SetMeStart(true);
+            String startupPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "ToastFish.lnk");
+            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            StartWithWindows.CreateShortcut(startupPath);
         }
         #endregion
-
     }
 }
 

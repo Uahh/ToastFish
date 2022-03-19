@@ -60,3 +60,9 @@ obj/Release/ToastFish_MarkupCompile.i.lref
 obj/Release/ToastFish_MarkupCompile.i.cache
 obj/Release/ToastFish.csprojAssemblyReference.cache
 obj/Release/DesignTimeResolveAssemblyReferencesInput.cache
+obj/Debug/ToastFish.application
+obj/Debug/ToastFish.exe.manifest
+obj/Debug/ToastFish.TrustInfo.xml
+obj/Release/ToastFish.application
+obj/Release/ToastFish.exe.manifest
+obj/Release/ToastFish.TrustInfo.xml
