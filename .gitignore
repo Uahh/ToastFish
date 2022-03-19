@@ -56,3 +56,7 @@ obj/Release/ToastFish_MarkupCompile.lref
 obj/Release/View/ToastFish.baml
 obj/Release/View/ToastFish.g.cs
 obj/Release/View/ToastFish.g.i.cs
+obj/Release/ToastFish_MarkupCompile.i.lref
+obj/Release/ToastFish_MarkupCompile.i.cache
+obj/Release/ToastFish.csprojAssemblyReference.cache
+obj/Release/DesignTimeResolveAssemblyReferencesInput.cache

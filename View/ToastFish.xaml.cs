@@ -13,6 +13,7 @@ using System.Diagnostics;
 using ToastFish.Model.PushControl;
 using ToastFish.Model.Log;
 using System.Speech.Synthesis;
+using ToastFish.Model.StartWithWindows;
 
 namespace ToastFish
 {
@@ -104,6 +105,7 @@ namespace ToastFish
         System.Windows.Forms.ToolStripMenuItem RandomTest = new System.Windows.Forms.ToolStripMenuItem();
 
         System.Windows.Forms.ToolStripMenuItem GotoHtml = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem Start = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
         private new void ContextMenu()
@@ -130,6 +132,9 @@ namespace ToastFish
 
             GotoHtml.Text = "使用说明";
             GotoHtml.Click += new EventHandler(HowToUse_Click);
+
+            Start.Text = "开机启动";
+            Start.Click += new EventHandler(Start_Click);
 
             ExitMenuItem.Text = "退出";
             ExitMenuItem.Click += new EventHandler(ExitApp_Click);
@@ -219,6 +224,7 @@ namespace ToastFish
             Cms.Items.Add(SelectJpBook);
             Cms.Items.Add(RandomTest);
             Cms.Items.Add(GotoHtml);
+            Cms.Items.Add(Start);
             Cms.Items.Add(ExitMenuItem);
             ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_1);
             ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_3);
@@ -502,6 +508,11 @@ namespace ToastFish
         {
             ToastNotificationManagerCompat.History.Clear();
             Environment.Exit(0);
+        }
+
+        private void Start_Click(object sender, EventArgs e)
+        {
+            StartWithWindows.SetMeStart(true);
         }
         #endregion
 
