@@ -15,6 +15,7 @@ using ToastFish.Model.Log;
 using System.Speech.Synthesis;
 using ToastFish.Model.StartWithWindows;
 using System.IO;
+using System.Windows.Xps.Packaging;
 
 namespace ToastFish
 {
@@ -23,23 +24,24 @@ namespace ToastFish
     /// </summary>
     public partial class MainWindow : Window
     {
-        ToastFishModel vm = new ToastFishModel();
-        Select se = new Select();
+        
+        ToastFishModel Vm = new ToastFishModel();
+        Select Se = new Select();
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+        private NotifyIcon _notifyIcon = null;
         public MainWindow()
         {
             Form_Load();
             InitializeComponent();
-            DataContext = vm;
+            DataContext = Vm;
             SetNotifyIcon();
-            Closing += Window_Closing;
-            se.GetBookNameAndNumber();
+            this.Visibility = Visibility.Hidden;
+            Se.GetBookNameAndNumber();
             ContextMenu();
             // 谜之bug，如果不先播放一段音频，那么什么声音都播不出来。
             // 所以播个没声音的音频先。
             PlayMute();
-
-            this.WindowState = (WindowState)FormWindowState.Minimized;
+            //this.WindowState = (WindowState)FormWindowState.Minimized;
         }
 
         private void Form_Load()
@@ -59,25 +61,15 @@ namespace ToastFish
             }
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            e.Cancel = true;
-            if (this.WindowState != WindowState.Minimized)
-            {
-                this.WindowState = WindowState.Minimized;
-                this.ShowInTaskbar = false;
-            }
-        }
-
         private void SetNotifyIcon()
         {
-            vm.notifyIcon = new System.Windows.Forms.NotifyIcon();
-            vm.notifyIcon.Text = "ToastFish";
+            Vm.notifyIcon = new NotifyIcon();
+            Vm.notifyIcon.Text = "ToastFish";
             System.Drawing.Icon icon = IconChika.chika16;
 
-            vm.notifyIcon.Icon = icon;
-            vm.notifyIcon.Visible = true;
-            vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
+            Vm.notifyIcon.Icon = icon;
+            Vm.notifyIcon.Visible = true;
+            //Vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
         }
 
         public void PlayMute()
@@ -113,7 +105,7 @@ namespace ToastFish
         {
             ContextMenuStrip Cms = new ContextMenuStrip();
 
-            vm.notifyIcon.ContextMenuStrip = Cms;
+            Vm.notifyIcon.ContextMenuStrip = Cms;
 
 
             Begin.Text = "开始！";
@@ -188,6 +180,8 @@ namespace ToastFish
             Pdf.Click += new EventHandler(OpenPdf_Click);
             ToolStripItem Use = new ToolStripMenuItem("使用说明");
             Use.Click += new EventHandler(HowToUse_Click);
+            ToolStripItem Site = new ToolStripMenuItem("官方网站");
+            Site.Click += new EventHandler(Site_Click);
 
             if (Select.TABLE_NAME == "CET4_1")
                 CET4_1.PerformClick();
@@ -252,6 +246,7 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomGoin);
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomJpWord);
             ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Site);
             ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Pdf);
         }
 
@@ -431,15 +426,15 @@ namespace ToastFish
             else if (sender.ToString() == "随机五十音测试")
                 TempName = "Goin";
             Select.TABLE_NAME = TempName;
-            se.UpdateBookName(TempName);
+            Se.UpdateBookName(TempName);
             if (sender.ToString() == "顺序五十音")
             {
-                int Progress = se.GetGoinProgress();
+                int Progress = Se.GetGoinProgress();
                 PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + Progress.ToString() + "/104");
             }
             else
             {
-                List<int> res = se.SelectCount();
+                List<int> res = Se.SelectCount();
                 PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
             }
         }
@@ -464,7 +459,7 @@ namespace ToastFish
         private void RandomGoinTest_Click(object sender, EventArgs e)
         {
             Select.TABLE_NAME = "Goin";
-            se.UpdateBookName("Goin");
+            Se.UpdateBookName("Goin");
             var state = thread.ThreadState;
             if (state == System.Threading.ThreadState.WaitSleepJoin || state == System.Threading.ThreadState.Stopped)
             {
@@ -502,6 +497,10 @@ namespace ToastFish
         }
 
         private void HowToUse_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(".\\Resources\\使用说明.html");
+        }
+        private void Site_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://lab.magiconch.com/toast-fish/");
         }
