@@ -14,6 +14,7 @@ namespace ToastFish.Model.StartWithWindows
     {
         /// <summary>
         /// 为本程序创建一个快捷方式。
+        /// 放到“启动”文件夹里即可实现开机启动。
         /// </summary>
         /// <param name="lnkFilePath">快捷方式的完全限定路径。</param>
         public static void CreateShortcut(string lnkFilePath)
@@ -27,7 +28,6 @@ namespace ToastFish.Model.StartWithWindows
             dynamic shell = Activator.CreateInstance(shellType);
             var shortcut = shell.CreateShortcut(lnkFilePath);
             shortcut.TargetPath = Assembly.GetEntryAssembly().Location;
-            //shortcut.Arguments = args;
             shortcut.WorkingDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
             shortcut.Save();
         }

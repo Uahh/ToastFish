@@ -52,7 +52,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>chika64.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -210,9 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\chika64.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="chika64.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\chikaGroup.JPG" />

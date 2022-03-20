@@ -206,7 +206,7 @@ namespace ToastFish.Model.PushControl
                 RandomList = WordList.WordList;
             }
 
-            if (ImportFlag == true)
+            if (ImportFlag == false)
             {
                 CreateLog Log = new CreateLog();
                 String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_英语.xlsx";

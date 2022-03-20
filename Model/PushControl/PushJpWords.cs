@@ -164,7 +164,7 @@ namespace ToastFish.Model.PushControl
             }
             List<JpWord> CopyList = Clone<JpWord>(RandomList);
 
-            if (ImportFlag == true)
+            if (ImportFlag == false)
             {
                 CreateLog Log = new CreateLog();
                 String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_日语.xlsx";
