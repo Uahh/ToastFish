@@ -72,4 +72,4 @@ git clone https://github.com/Uahh/ToastFish
 
 ## 感谢
 
-感谢@itorr为本软件提供的支持、建议和测试！
+感谢[@itorr](https://github.com/itorr)为本软件提供的支持、建议和测试！
