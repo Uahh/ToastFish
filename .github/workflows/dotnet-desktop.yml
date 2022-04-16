@@ -53,15 +53,15 @@ jobs:
       run: dotnet test -c $env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
-      
+
     # Upload bin directory
     - name: Upload bin directory
       uses: actions/upload-artifact@main
-      if: ${{ success() }}
+      if: ${{ success() && matrix.configuration == 'Release' }}
       with:
         name: ToastFish_Build
         path: ./bin/Release/
-    
+
     # Delete workflow runs
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
