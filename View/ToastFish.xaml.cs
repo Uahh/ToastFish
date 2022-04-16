@@ -16,6 +16,7 @@ using System.Speech.Synthesis;
 using ToastFish.Model.StartWithWindows;
 using System.IO;
 using System.Windows.Xps.Packaging;
+using System.Windows.Input;
 
 namespace ToastFish
 {
@@ -29,6 +30,7 @@ namespace ToastFish
         Select Se = new Select();
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         private NotifyIcon _notifyIcon = null;
+        //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
         public MainWindow()
         {
             Form_Load();
@@ -38,10 +40,45 @@ namespace ToastFish
             this.Visibility = Visibility.Hidden;
             Se.GetBookNameAndNumber();
             ContextMenu();
+            new HotKey(Key.Q, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.A, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.S, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.D, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.F, KeyModifier.Alt , OnHotKeyHandler);
+
             // 谜之bug，如果不先播放一段音频，那么什么声音都播不出来。
             // 所以播个没声音的音频先。
             PlayMute();
             //this.WindowState = (WindowState)FormWindowState.Minimized;
+        }
+
+        private void OnHotKeyHandler(HotKey hotKey)
+        {
+            string key = hotKey.Key.ToString();
+            Debug.WriteLine("key pressed:" + key);
+            switch (key) 
+            {
+                case "Q":                    
+                    Begin_Click(null, null);
+                    break;
+                case "A":
+                    PushWords.HotKeytObservable.raiseEvent("A");
+                    break;
+                case "S":
+                    PushWords.HotKeytObservable.raiseEvent("S");
+                    break;
+                case "D":
+                    PushWords.HotKeytObservable.raiseEvent("D");
+                    break;
+                case "F":
+                    PushWords.HotKeytObservable.raiseEvent("F");
+                    break;
+                default:
+                    PushWords.HotKeytObservable.raiseEvent("D");
+                    break;
+            }
+         
+            
         }
 
         private void Form_Load()
@@ -69,6 +106,7 @@ namespace ToastFish
 
             Vm.notifyIcon.Icon = icon;
             Vm.notifyIcon.Visible = true;
+            Vm.notifyIcon.DoubleClick += Begin_Click;
             //Vm.notifyIcon.DoubleClick += NotifyIconDoubleClick;
         }
 
@@ -92,6 +130,7 @@ namespace ToastFish
 
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem SetEngType = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ImportWords = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectBook = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SelectJpBook = new System.Windows.Forms.ToolStripMenuItem();
@@ -111,8 +150,11 @@ namespace ToastFish
             Begin.Text = "开始！";
             Begin.Click += new EventHandler(Begin_Click);
 
-            SetNumber.Text = "设置单词个数";
+            SetNumber.Text = "单词个数";
             SetNumber.Click += new EventHandler(SetNumber_Click);
+
+            SetEngType.Text = "英语发音";
+            SetEngType.Click += new EventHandler(SetEngType_Click);
 
             ImportWords.Text = "导入单词";
             ImportWords.Click += new EventHandler(ImportWords_Click);
@@ -218,6 +260,7 @@ namespace ToastFish
 
             Cms.Items.Add(Begin);
             Cms.Items.Add(SetNumber);
+            Cms.Items.Add(SetEngType);
             Cms.Items.Add(ImportWords);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(SelectJpBook);
@@ -225,29 +268,29 @@ namespace ToastFish
             Cms.Items.Add(GotoHtml);
             Cms.Items.Add(Start);
             Cms.Items.Add(ExitMenuItem);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_1);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET4_3);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET6_1);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(CET6_3);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(GMAT_3);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(GRE_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(IELTS_3);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(TOEFL_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(SAT_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(KaoYan_1);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(KaoYan_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level4_1);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level4luan_2);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level8_1);
-            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Level8luan_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Goin);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(StdJp_Mid);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomWord);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomGoin);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(RandomJpWord);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Use);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Site);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Pdf);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET4_1);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET4_3);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET6_1);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET6_3);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(GMAT_3);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(GRE_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(IELTS_3);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(TOEFL_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(SAT_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(KaoYan_1);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(KaoYan_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level4_1);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level4luan_2);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level8_1);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level8luan_2);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Goin);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(StdJp_Mid);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomWord);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomGoin);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomJpWord);
+            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Site);
+            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Pdf);
         }
 
         private void Begin_Click(object sender, EventArgs e)
@@ -298,6 +341,15 @@ namespace ToastFish
             thread.Start();
         }
 
+        private void SetEngType_Click(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(new ThreadStart(PushWords.SetEngType));
+            thread.Start();
+        }
+
+
+        
+
         private void ImportWords_Click(object sender, EventArgs e)
         {
             OpenFileDialog Dialog = new OpenFileDialog();
@@ -311,7 +363,7 @@ namespace ToastFish
             {
                 List<Word> WordList = (List<Word>)Log.ImportExcel(FileName);
                 Words.WordList = WordList;
-                Select.TABLE_NAME = "Revue Starlight!!";
+                Select.TABLE_NAME = "GRE_2";
             }
             catch
             { }
