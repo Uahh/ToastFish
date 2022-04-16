@@ -1,6 +1,20 @@
+<p align="center">
+  <img src="Resources/chika128.ico" width="128" height="128" alt="图标"/>
+</p>
+
+<div align="center">
+  
 # ToastFish
 
-这是一个利用Windows通知栏背单词的软件。可以让你在上班、上课等恶劣环境下安全隐蔽地背单词。
+#### 这是一个利用Windows通知栏背单词的软件
+#### 可以让你在上班、上课等恶劣环境下安全隐蔽地背单词
+
+![License MIT](https://img.shields.io/badge/license-MIT-orange)
+![GitHub release (latest by date)](https://img.shields.io/badge/release-v2.2-blue)
+![GitHub issues](https://img.shields.io/github/issues/Uahh/ToastFish)
+[![.NET Build & Test](https://github.com/Uahh/ToastFish/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/Uahh/ToastFish/actions/workflows/dotnet-desktop.yml)
+
+</div>
 
 ## 使用方法
 ### 基本流程
