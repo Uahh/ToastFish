@@ -17,6 +17,7 @@ namespace ToastFish.Model.SqliteControl
 
         public static string TABLE_NAME = "CET4_1";  // 当前书籍名字
         public static int WORD_NUMBER = 10;  // 当前单词数量
+        public static int ENG_TYPE = 2;  // 英语类型1：美语，2：英语
         public SQLiteConnection DataBase;
         public IEnumerable<Word> AllWordList;
         public IEnumerable<JpWord> AllJpWordList;
@@ -28,7 +29,10 @@ namespace ToastFish.Model.SqliteControl
         /// </summary>
         SQLiteConnection ConnectToDatabase()
         {
-            var databasePath = @"Data Source=./Resources/inami.db;Version=3";
+            //var databasePath = @"Data Source=./Resources/inami.db;Version=3";
+            //var databasePath = @"Data Source="+System.IO.Directory.GetCurrentDirectory() + @"\Resources\inami.db;Version=3";
+            string strExeFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string databasePath = @"Data Source=" + System.IO.Path.GetDirectoryName(strExeFilePath) + @"\Resources\inami.db;Version=3";
             return new SQLiteConnection(databasePath);
         }
 
@@ -78,6 +82,9 @@ namespace ToastFish.Model.SqliteControl
             SQLiteCommand Update = DataBase.CreateCommand();
             Update.CommandText = "UPDATE Global SET currentBookName = '" + TableName + "'";
             Update.ExecuteNonQuery();
+            //Global Temp = new Global();
+            //var GlobalVariable = DataBase.Query<Global>("select * from Global", Temp).ToArray();
+
         }
 
         public void UpdateNumber(int WordNumber)

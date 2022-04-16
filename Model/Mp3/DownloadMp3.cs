@@ -61,17 +61,27 @@ namespace ToastFish.Model.Download
             }
         }
 
-        public static void PlayMp3(object Speech)
+        public static bool PlayMp3(object Speech)
         {
+            bool ret = true;
             List<string> TempSpeech = (List<string>)Speech;
+            string mp3_full_name = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + TempSpeech[0] + ".mp3";
+            if (File.Exists(mp3_full_name)){
+                MUSIC MIC = new MUSIC();
+                MIC.FileName = mp3_full_name;
+                MIC.play();
+                return ret;
+            }
             DownloadMp3 Download = new DownloadMp3();
-            bool flag = Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + TempSpeech[1] + ".mp3", TempSpeech[0] + "_2");
-            if(flag == true)
+            bool flag = Download.HttpDownload("https://dict.youdao.com/dictvoice?audio=" + TempSpeech[1], TempSpeech[0]);
+            if (flag == true)
             {
                 MUSIC MIC = new MUSIC();
-                MIC.FileName = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache\" + TempSpeech[0] + "_2.mp3";
+                MIC.FileName = mp3_full_name;
                 MIC.play();
             }
+            else { ret = false; };
+            return ret;
         }
     } 
 }

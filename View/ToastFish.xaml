@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToastFish"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator},Path=Main}"
-        Title="ToastFish v2.1" Height="170" Width="400">
+        Title="ToastFish v2.1.1" Height="170" Width="400">
     <Grid>
         <TextBox Text="BUG反馈，和软件更新群：560844819" Height="20" FontSize="14" BorderThickness="0"  VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0" IsReadOnly="True" />
         <TextBox Text="也可以去Github上提issuse，提出意见建议。" Height="20" FontSize="14" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,40,0,0" IsReadOnly="True"/>

@@ -60,7 +60,20 @@ namespace ToastFish.Model.Mp3
                     mc.iName = value;
                     ilong = APIClass.GetShortPathName(mc.iName, Name, Name.Length);
                     Name = GetCurrPath(Name);
-                    Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " alias media";
+
+
+                    bool iswave = isFileWave(value);
+                    if (iswave)
+                    {
+                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type waveaudio alias media";
+
+                    }
+                    else
+                    {
+                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type MPEGVideo alias media";
+                    }
+
+                    //Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " alias media";
                     ilong = APIClass.mciSendString("close all", TemStr, TemStr.Length, 0);
                     ilong = APIClass.mciSendString(Name, TemStr, TemStr.Length, 0);
                     ilong = APIClass.mciSendString("set media time format milliseconds", TemStr, TemStr.Length, 0);
@@ -77,6 +90,7 @@ namespace ToastFish.Model.Mp3
             TemStr = "";
             TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
             APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
+            //APIClass.mciSendString("play media", null, 0, 0);
             mc.state = State.mPlaying;
         }
         //停止
@@ -126,6 +140,44 @@ namespace ToastFish.Model.Mp3
                 mc.iPos = (int)(Convert.ToDouble(durLength) / 1000f);
                 return mc.iPos;
             }
+        }
+
+        public bool isFileWave(string path)
+        {
+            path = Uri.UnescapeDataString(path);
+
+            byte[] b = new byte[16];
+            bool isSet1 = false;
+            bool isSet2 = false;
+            bool isWave = false;
+
+            //Read bytes
+            try
+            {
+                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                //StreamReader sr = new StreamReader(fs, System.Text.Encoding.Default);
+                // FileStream fs = new FileStream(path, FileMode.Open);
+                //fs.Seek(-128, SeekOrigin.End);
+                fs.Read(b, 0, 16);
+                //Set flag
+                String sFlag = System.Text.Encoding.Default.GetString(b, 0, 4).ToUpper();
+                String sType = System.Text.Encoding.Default.GetString(b, 8, 4).ToUpper();
+                if (sFlag.CompareTo("RIFF") == 0) isSet1 = true;
+                if (sType.CompareTo("WAVE") == 0) isSet2 = true;
+
+                if (isSet1 && isSet2)
+                {
+                    isWave = true;
+                }
+                fs.Close();
+                fs.Dispose();
+            }
+            catch (IOException ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+
+            return isWave;
         }
     }
     public class APIClass
