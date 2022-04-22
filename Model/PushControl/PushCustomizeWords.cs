@@ -30,7 +30,7 @@ namespace ToastFish.Model.PushControl
 
             .Show();
         }
-        public static void Recitation(Object Words)
+        public static new void Recitation(Object Words)
         {
             WordType WordList = (WordType)Words;
 

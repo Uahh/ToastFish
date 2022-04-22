@@ -53,7 +53,7 @@ namespace ToastFish.Model.StartWithWindows
 
             _dictHotKeyToCalBackProc.Add(Id, this);
 
-            Debug.Print(result.ToString() + ", " + Id + ", " + virtualKeyCode);
+            Debug.WriteLine($"RegisterHotKey return {result}, ID={Id},keyCode={virtualKeyCode}");
             return result;
         }
 

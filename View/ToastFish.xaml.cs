@@ -29,8 +29,15 @@ namespace ToastFish
         ToastFishModel Vm = new ToastFishModel();
         Select Se = new Select();
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
-        private NotifyIcon _notifyIcon = null;
-        //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
+        Dictionary<string, string> TablelDictionary = new Dictionary<string, string>(){
+        {"CET4_1", "四级核心词汇"},{"CET4_3", "四级完整词汇"},{"CET6_1", "六级核心词汇"},
+        {"CET6_3", "六级完整词汇"},{"GMAT_3", "GMAT词汇"},{"GRE_2", "GRE词汇"},
+        {"IELTS_3", "IELTS词汇"},{"TOEFL_2", "TOEFL词汇"},{"SAT_2", "SAT词汇"},
+        {"KaoYan_1", "考研必考词汇"},{"KaoYan_2", "考研完整词汇"},{"Level4_1", "专四真题高频词"},
+        {"Level4luan_2", "专四核心词汇"},{"Level8_1", "专八真题高频词"},{"Level8luan_2", "专八核心词汇"},
+        {"Goin", "顺序五十音"},{"StdJp_Mid", "标准日本语中级词汇"} };
+       // private NotifyIcon _notifyIcon = null;
+       //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
         public MainWindow()
         {
             Form_Load();
@@ -38,13 +45,13 @@ namespace ToastFish
             DataContext = Vm;
             SetNotifyIcon();
             this.Visibility = Visibility.Hidden;
-            Se.GetBookNameAndNumber();
+            Se.LoadGlobalConfig();
             ContextMenu();
-            new HotKey(Key.Q, KeyModifier.Alt , OnHotKeyHandler);
-            new HotKey(Key.A, KeyModifier.Alt , OnHotKeyHandler);
-            new HotKey(Key.S, KeyModifier.Alt , OnHotKeyHandler);
-            new HotKey(Key.D, KeyModifier.Alt , OnHotKeyHandler);
-            new HotKey(Key.F, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.Oem3, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.D1, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.D2, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.D3, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.D4, KeyModifier.Alt , OnHotKeyHandler);
 
             // 谜之bug，如果不先播放一段音频，那么什么声音都播不出来。
             // 所以播个没声音的音频先。
@@ -58,27 +65,24 @@ namespace ToastFish
             Debug.WriteLine("key pressed:" + key);
             switch (key) 
             {
-                case "Q":                    
+                case "Oem3":                    
                     Begin_Click(null, null);
                     break;
-                case "A":
-                    PushWords.HotKeytObservable.raiseEvent("A");
+                case "D1":
+                    PushWords.HotKeytObservable.raiseEvent("1");
                     break;
-                case "S":
-                    PushWords.HotKeytObservable.raiseEvent("S");
+                case "D2":
+                    PushWords.HotKeytObservable.raiseEvent("2");
                     break;
-                case "D":
-                    PushWords.HotKeytObservable.raiseEvent("D");
+                case "D3":
+                    PushWords.HotKeytObservable.raiseEvent("3");
                     break;
-                case "F":
-                    PushWords.HotKeytObservable.raiseEvent("F");
+                case "D4":
+                    PushWords.HotKeytObservable.raiseEvent("4");
                     break;
                 default:
-                    PushWords.HotKeytObservable.raiseEvent("D");
                     break;
-            }
-         
-            
+            }           
         }
 
         private void Form_Load()
@@ -129,6 +133,7 @@ namespace ToastFish
         #region 托盘右键菜单
 
         System.Windows.Forms.ToolStripMenuItem Begin = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem Settings = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetNumber = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem SetEngType = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ImportWords = new System.Windows.Forms.ToolStripMenuItem();
@@ -140,6 +145,8 @@ namespace ToastFish
         System.Windows.Forms.ToolStripMenuItem Start = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
+        System.Windows.Forms.ToolStripMenuItem SetAutoPlay = new System.Windows.Forms.ToolStripMenuItem();
+
         private new void ContextMenu()
         {
             ContextMenuStrip Cms = new ContextMenuStrip();
@@ -149,12 +156,22 @@ namespace ToastFish
 
             Begin.Text = "开始！";
             Begin.Click += new EventHandler(Begin_Click);
+            Settings.Text = "参数设置";
+
 
             SetNumber.Text = "单词个数";
             SetNumber.Click += new EventHandler(SetNumber_Click);
 
-            SetEngType.Text = "英语发音";
+            SetEngType.Text = "英标类型";
             SetEngType.Click += new EventHandler(SetEngType_Click);
+
+            SetAutoPlay.Text="自动播放";
+            SetAutoPlay.Click += new EventHandler(AutoPlay_Click);
+            if (Select.AUTO_PLAY != 0)
+                SetAutoPlay.Checked = true;
+            else
+                SetAutoPlay.Checked = false;
+
 
             ImportWords.Text = "导入单词";
             ImportWords.Click += new EventHandler(ImportWords_Click);
@@ -224,6 +241,16 @@ namespace ToastFish
             Use.Click += new EventHandler(HowToUse_Click);
             ToolStripItem Site = new ToolStripMenuItem("官方网站");
             Site.Click += new EventHandler(Site_Click);
+            ToolStripItem Shortcuts = new ToolStripMenuItem("快捷方式");
+            Shortcuts.Click += new EventHandler(ShortCuts_Click);
+            ToolStripItem ResetLearingStatus = new ToolStripMenuItem("重置进度");
+            ResetLearingStatus.Click += new EventHandler(ResetLearingStatus_Click);
+
+
+ 
+
+
+
 
             if (Select.TABLE_NAME == "CET4_1")
                 CET4_1.PerformClick();
@@ -259,43 +286,54 @@ namespace ToastFish
                 Goin.PerformClick();
 
             Cms.Items.Add(Begin);
-            Cms.Items.Add(SetNumber);
-            Cms.Items.Add(SetEngType);
+            //Cms.Items.Add(SetNumber);
+            //Cms.Items.Add(SetEngType);
             Cms.Items.Add(ImportWords);
             Cms.Items.Add(SelectBook);
             Cms.Items.Add(SelectJpBook);
             Cms.Items.Add(RandomTest);
+            Cms.Items.Add(Settings);
             Cms.Items.Add(GotoHtml);
             Cms.Items.Add(Start);
             Cms.Items.Add(ExitMenuItem);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET4_1);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET4_3);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET6_1);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(CET6_3);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(GMAT_3);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(GRE_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(IELTS_3);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(TOEFL_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(SAT_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(KaoYan_1);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(KaoYan_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level4_1);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level4luan_2);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level8_1);
-            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(Level8luan_2);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(Goin);
-            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(StdJp_Mid);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomWord);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomGoin);
-            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(RandomJpWord);
-            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Use);
-            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Site);
-            ((ToolStripDropDownItem)Cms.Items[7]).DropDownItems.Add(Pdf);
+
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET4_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(CET6_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GMAT_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(GRE_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(IELTS_3);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(TOEFL_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(SAT_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(KaoYan_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level4luan_2);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8_1);
+            ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems.Add(Level8luan_2);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(Goin);
+            ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems.Add(StdJp_Mid);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomWord);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomGoin);
+            ((ToolStripDropDownItem)Cms.Items[4]).DropDownItems.Add(RandomJpWord);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetNumber);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetEngType);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetAutoPlay);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(ResetLearingStatus);
+            
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Shortcuts);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Use);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Site);
+            ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Pdf);            
         }
 
         private void Begin_Click(object sender, EventArgs e)
         {
-            System.IO.Directory.CreateDirectory("Log");
+            if (!System.IO.Directory.Exists("Log"))  {
+                System.IO.Directory.CreateDirectory("Log");
+            }
+           // System.IO.Directory.CreateDirectory("Log");
 
             var state = thread.ThreadState;
 
@@ -316,7 +354,7 @@ namespace ToastFish
                 //else if (Select.TABLE_NAME == "自定义英语")
                 //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.RecitationSM2));
 
                 thread.Start(Words);
             }
@@ -329,7 +367,7 @@ namespace ToastFish
                 //else if (Select.TABLE_NAME == "自定义英语")
                 //    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
                 else
-                    thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
+                    thread = new Thread(new ParameterizedThreadStart(PushWords.RecitationSM2));
                 
                 thread.Start(Words);
             }
@@ -359,32 +397,43 @@ namespace ToastFish
             CreateLog Log = new CreateLog();
             WordType Words = new WordType();
             Words.Number = Select.WORD_NUMBER;
+            object lstObj = Log.ImportExcel(FileName);
+            string typeObj = lstObj.ToString();
+            string typeWord= typeof(List<Word>).ToString();
+            string typeJpWord = typeof(List<JpWord>).ToString();
+            string typeCustWord = typeof(List<CustomizeWord>).ToString();
             try
             {
-                List<Word> WordList = (List<Word>)Log.ImportExcel(FileName);
-                Words.WordList = WordList;
-                Select.TABLE_NAME = "GRE_2";
+                if (typeObj == typeWord)
+                {
+                    Words.WordList = (List<Word>)lstObj;
+                    Select.TABLE_NAME = "GRE_2";
+                }
+                else if (typeObj == typeJpWord)
+                {
+                    Words.JpWordList = (List<JpWord>)lstObj;
+                    Select.TABLE_NAME = "StdJp_Mid";
+                }
+                else if (typeObj == typeCustWord)
+                {
+                    Words.CustWordList = (List<CustomizeWord>)lstObj;
+                    Select.TABLE_NAME = "自定义";
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("导入文件出错！");
+                    return;
+                }
             }
-            catch
-            { }
-            try
-            {
-                List<JpWord> WordList = (List<JpWord>)Log.ImportExcel(FileName);
-                Words.JpWordList = WordList;
-                Select.TABLE_NAME = "StdJp_Mid";
+            catch {
+                System.Windows.Forms.MessageBox.Show("导入文件出错！");
+                return;
             }
-            catch
-            { }
-            try
-            {
-                List<CustomizeWord> WordList = (List<CustomizeWord>)Log.ImportExcel(FileName);
-                Words.CustWordList = WordList;
-                Select.TABLE_NAME = "自定义";
+            
+            if (!Directory.Exists("Log")){
+                System.IO.Directory.CreateDirectory("Log");
             }
-            catch
-            { }
-
-            System.IO.Directory.CreateDirectory("Log");
+            
 
             var state = thread.ThreadState;
 
@@ -427,7 +476,22 @@ namespace ToastFish
 
         private void SelectBook_Click(object sender, EventArgs e)
         {
-            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            ToolStripMenuItem curitem = sender as ToolStripMenuItem;
+            if (curitem != null && curitem.OwnerItem !=null)
+            {
+                var Cms = (curitem.OwnerItem as ToolStripMenuItem).Owner as ContextMenuStrip;
+                //int index = (curitem.OwnerItem as ToolStripMenuItem).DropDownItems.IndexOf(item);
+                foreach (var itemi in ((ToolStripDropDownItem)Cms.Items[2]).DropDownItems)
+                {
+                    (itemi as ToolStripMenuItem).Checked = false;
+                }
+                foreach (var itemi in ((ToolStripDropDownItem)Cms.Items[3]).DropDownItems)
+                {
+                    (itemi as ToolStripMenuItem).Checked = false;
+                }
+            }
+            curitem.Checked = true;
+           // (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             string TempName = "";
             if (sender.ToString() == "四级核心词汇")
                 TempName = "CET4_1";
@@ -479,16 +543,17 @@ namespace ToastFish
                 TempName = "Goin";
             Select.TABLE_NAME = TempName;
             Se.UpdateBookName(TempName);
-            if (sender.ToString() == "顺序五十音")
-            {
-                int Progress = Se.GetGoinProgress();
-                PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + Progress.ToString() + "/104");
-            }
-            else
-            {
-                List<int> res = Se.SelectCount();
+            Se.UpdateTableCount();
+            //if (sender.ToString() == "顺序五十音")
+            //{
+            //     int Progress = Se.GetGoinProgress();
+            //     PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + Progress.ToString() + "/104");
+            // }
+            // else
+            //{
+            List<int> res = Se.SelectCount();
                 PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
-            }
+           // }
         }
 
         private void RandomWordTest_Click(object sender, EventArgs e)
@@ -503,7 +568,7 @@ namespace ToastFish
                 }
             }
             if (Select.TABLE_NAME == "StdJp_Mid" || Select.TABLE_NAME == "Goin")
-                Select.TABLE_NAME = "CET4_1";
+                Select.TABLE_NAME = "GRE_2";
             thread = new Thread(new ParameterizedThreadStart(PushWords.UnorderWord));
             thread.Start(Select.WORD_NUMBER);
         }
@@ -546,6 +611,54 @@ namespace ToastFish
             Select.TABLE_NAME = "StdJp_Mid";
             thread = new Thread(new ParameterizedThreadStart(PushJpWords.UnorderWord));
             thread.Start(Select.WORD_NUMBER);
+        }
+
+        public  void ResetLearingStatus_Click(object sender, EventArgs e)
+        {
+           string TableName;
+           bool isok= TablelDictionary.TryGetValue(Select.TABLE_NAME, out TableName);
+            if (!isok) {
+                return;
+            }
+            
+            DialogResult result = System.Windows.Forms.MessageBox.Show(
+            $"是否要重置“{TableName}”的学习进度?", $"进度重置：{Select.TABLE_NAME}",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result==System.Windows.Forms.DialogResult.Yes)
+            {
+               
+                try {
+                    Se.ResetTableCount();
+                    PushWords.PushMessage($"重置{TableName}完成！");
+                    //System.Windows.Forms.MessageBox.Show($"重置{TableName}完成！");
+
+                }
+                catch {
+                    PushWords.PushMessage($"重置{TableName}出错！");
+                   // System.Windows.Forms.MessageBox.Show($"重置{TableName}出错！");
+                }                
+            }
+            //this.Se. 
+        }
+        private void ShortCuts_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("ALT+~：开始内置单词学习\nALT+数字1到4:对应点击按钮1到4","快捷方式");
+        }
+
+        private void AutoPlay_Click(object sender, EventArgs e)
+        {
+            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            if (Select.AUTO_PLAY == 0)
+            {
+                Select.AUTO_PLAY = 1;
+                (sender as ToolStripMenuItem).Checked = true;
+            }               
+            else
+            {
+                Select.AUTO_PLAY = 0;
+                (sender as ToolStripMenuItem).Checked = false;
+            }
+            Se.UpdateGlobalConfig();
         }
 
         private void HowToUse_Click(object sender, EventArgs e)
