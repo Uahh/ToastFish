@@ -1,8 +1,4 @@
 # ToastFish
-update:
-1.添加快捷键
-2.添加在线美/音语音
-3.添加英美/音标显示
 
 这是一个利用Windows通知栏背单词的软件。可以让你在上班、上课等恶劣环境下安全隐蔽地背单词。
 
@@ -76,4 +72,4 @@ git clone https://github.com/Uahh/ToastFish
 
 ## 感谢
 
-感谢[@itorr](https://github.com/itorr)为本软件提供的支持、建议和测试！
+感谢@itorr为本软件提供的支持、建议和测试！

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,7 +22,7 @@ namespace ToastFish.Model.Download
         public bool HttpDownload(string Url, string Name)
         {
             string CachePath = System.IO.Directory.GetCurrentDirectory() + @"\Mp3Cache";
-            if (!System.IO.File.Exists(CachePath))
+            if (!System.IO.Directory.Exists(CachePath))
             {
                 System.IO.Directory.CreateDirectory(CachePath);  //创建临时文件目录
             }
@@ -32,7 +33,7 @@ namespace ToastFish.Model.Download
                 {
                     System.IO.File.Move(CacheFail, CachePath);
                 }
-                FileStream fs = new FileStream(CacheFail, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                
                 // 设置参数
                 HttpWebRequest request = WebRequest.Create(Url) as HttpWebRequest;
                 //发送请求并获取相应回应数据
@@ -42,21 +43,32 @@ namespace ToastFish.Model.Download
                 //创建本地文件写入流
                 //Stream stream = new FileStream(tempFile, FileMode.Create);
                 byte[] bArr = new byte[1024];
+                MemoryStream ms = new MemoryStream();
+                StreamWriter writer = new StreamWriter(ms);
                 int size = responseStream.Read(bArr, 0, (int)bArr.Length);
                 while (size > 0)
                 {
                     //stream.Write(bArr, 0, size);
-                    fs.Write(bArr, 0, size);
+                    //fs.Write(bArr, 0, size);
+                    ms.Write(bArr, 0, size);
+                    ms.Flush();
                     size = responseStream.Read(bArr, 0, (int)bArr.Length);
                 }
+                if (ms.Length > 0)
+                {
+                    FileStream fs = new FileStream(CacheFail, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                    fs.Write(ms.ToArray(), 0, (int) ms.Length);
+                    fs.Close();
+                }
                 //stream.Close();
-                fs.Close();
+
                 responseStream.Close();
                 //System.IO.File.Move(tempFile, path);
                 return true;
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"HttpDownload() Error Message:{ex.Message}");
                 return false;
             }
         }
