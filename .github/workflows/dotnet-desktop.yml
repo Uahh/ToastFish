@@ -61,11 +61,5 @@ jobs:
       with:
         name: ToastFish_Build
         path: ./bin/Release/
-    
-    # Delete workflow runs
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 7
-        keep_minimum_runs: 3
+
 
