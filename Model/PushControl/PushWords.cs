@@ -166,17 +166,20 @@ namespace ToastFish.Model.PushControl
                 Debug.WriteLine("HotKeytObservable.Subscribe:" + events);
                 switch (events)
                 {
-                    case "1": //easy
-                        tcs.TrySetResult(0);
-                        break;
-                    case "2"://good
+                    case "1": //again
                         tcs.TrySetResult(1);
                         break;
-                    case "3"://again
+                    case "2"://hard
                         tcs.TrySetResult(2);
                         break;
-                    case "4"://voice
+                    case "3"://good
                         tcs.TrySetResult(3);
+                        break;
+                    case "4"://easy
+                        tcs.TrySetResult(4);
+                        break;
+                    case "S"://voice
+                        tcs.TrySetResult(0);
                         break;
                     default:
                         break;
@@ -198,23 +201,27 @@ namespace ToastFish.Model.PushControl
                     //Debug.WriteLine("Debuging....");
                     if (Status == "easy")
                     {
-                        tcs.TrySetResult(0);
+                        tcs.TrySetResult(4);
                     }
                     else if (Status == "good")
                     {
-                        tcs.TrySetResult(1);
+                        tcs.TrySetResult(3);
                     }
-                    else if (Status == "again")
+                    else if (Status == "hard")
                     {
                         tcs.TrySetResult(2);
                     }
+                    else if (Status == "again")
+                    {
+                        tcs.TrySetResult(1);
+                    }
                     else if (Status == "voice")
                     {
-                        tcs.TrySetResult(3);
+                        tcs.TrySetResult(0);
                     }
                     else
                     {
-                        tcs.TrySetResult(3);
+                        tcs.TrySetResult(0);
                     }
                 };
                 return await tcs.Task;
@@ -437,19 +444,25 @@ namespace ToastFish.Model.PushControl
                     Debug.WriteLine(e.Message);
                     return result;
                 }
-                if (answer == 0)
-                {
-                    result = Parameters.Easy;
-                    isFinished = true;
-                }else if (answer == 1)
-                {
-                    result = Parameters.Good;
-                    isFinished = true;
-                } else if (answer == 2)
+                if (answer == 1)
                 {
                     result = Parameters.Again;
                     isFinished = true;
+                }else if (answer == 2)
+                {
+                    result = Parameters.Hard;
+                    isFinished = true;
                 } else if (answer == 3)
+                {
+                    result = Parameters.Good;
+                    isFinished = true;
+                }
+                else if (answer == 4)
+                {
+                    result = Parameters.Easy;
+                    isFinished = true;
+                }
+                else if (answer == 0)
                 {
                     bool isOK = Download.DownloadMp3.PlayMp3(words);
                     if (isOK == false)
@@ -635,6 +648,7 @@ namespace ToastFish.Model.PushControl
                 Log.OutputExcel(LogName, AllFinshedWordList, "英语");
             }
 
+ 
         }
 
         /// <summary>
@@ -929,8 +943,13 @@ namespace ToastFish.Model.PushControl
             .AddText(HeadTile)
 
             .AddButton(new ToastButton()
-                .SetContent("已经牢记")
-                .AddArgument("action", "easy")
+                .SetContent("没有印象")
+                .AddArgument("action", "again")
+                .SetBackgroundActivation())
+
+            .AddButton(new ToastButton()
+                .SetContent("记忆模糊")
+                .AddArgument("action", "hard")
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
@@ -939,14 +958,15 @@ namespace ToastFish.Model.PushControl
                 .SetBackgroundActivation())
 
             .AddButton(new ToastButton()
-                .SetContent("没有印象")
-                .AddArgument("action", "again")
-                .SetBackgroundActivation())
+                .SetContent("已经牢记")
+                .AddArgument("action", "easy")
+                .SetBackgroundActivation())          
 
-            .AddButton(new ToastButton()
+          /*  .AddButton(new ToastButton()
                 .SetContent("发音")
                 .AddArgument("action", "voice")
-                .SetBackgroundActivation())
+                .SetBackgroundActivation())*/
+
             .Show();
         }
 

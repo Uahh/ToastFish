@@ -47,11 +47,12 @@ namespace ToastFish
             this.Visibility = Visibility.Hidden;
             Se.LoadGlobalConfig();
             ContextMenu();
-            new HotKey(Key.Q, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.Oem3, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D1, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D2, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D3, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D4, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.Q, KeyModifier.Alt, OnHotKeyHandler);
 
             // 谜之bug，如果不先播放一段音频，那么什么声音都播不出来。
             // 所以播个没声音的音频先。
@@ -79,6 +80,9 @@ namespace ToastFish
                     break;
                 case "D4":
                     PushWords.HotKeytObservable.raiseEvent("4");
+                    break;
+                case "Oem3":
+                    PushWords.HotKeytObservable.raiseEvent("S");
                     break;
                 default:
                     break;
@@ -651,7 +655,7 @@ namespace ToastFish
         }
         private void ShortCuts_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("ALT+Q：开始内置单词学习\nALT+1到4：对应点击按钮1到4", "版本号:2.3.2");
+            System.Windows.Forms.MessageBox.Show("ALT+Q     ：开始内置单词学习\nALT+~     ：英语单词发音\nALT+1到4：对应点击按钮1到4", "版本号：2.3.3");
         }
 
         private void AutoPlay_Click(object sender, EventArgs e)
