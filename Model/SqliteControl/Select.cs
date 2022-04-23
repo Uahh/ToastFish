@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Dapper;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data.SQLite;
-using Dapper;
-using System.Windows;
+using System.Linq;
 using ToastFish.Model.SM2plus;
 
 namespace ToastFish.Model.SqliteControl
@@ -15,8 +14,7 @@ namespace ToastFish.Model.SqliteControl
             DataBase = ConnectToDatabase();
             DataBase.Open();
         }
-   
-
+ 
         public static string TABLE_NAME = "CET4_1";  // 当前书籍名字
         public static int WORD_NUMBER = 10;  // 当前单词数量
         public static int ENG_TYPE = 2;  // 英语类型1：美语，2：英语
@@ -74,13 +72,13 @@ namespace ToastFish.Model.SqliteControl
             var dr = Update.ExecuteReader();
             List<string> statusLst = new List<string>();
             int Count = 0;
-            int value=-1;
+            int value = -1;
             while (dr.Read())//loop through the various columns and their info
             {
                 var rawvalue = dr.GetValue(0);//0:cid;1:name; 2:type;3:notnull;4:dflt_value;5:pk
-               
+
                 string type = rawvalue.GetType().Name;
-                if (type.Equals("String",StringComparison.OrdinalIgnoreCase))
+                if (type.Equals("String", StringComparison.OrdinalIgnoreCase))
                     value = int.Parse((string)rawvalue);
                 else
                     value = int.Parse(rawvalue.ToString());
@@ -140,7 +138,7 @@ namespace ToastFish.Model.SqliteControl
             Global Temp = new Global();
             var GlobalVariable = DataBase.Query<Global>("select * from Global", Temp).ToArray();
             WORD_NUMBER = int.Parse(GlobalVariable[0].currentWordNumber);
-            TABLE_NAME = GlobalVariable[0].currentBookName;            
+            TABLE_NAME = GlobalVariable[0].currentBookName;
             AUTO_PLAY = GlobalVariable[0].autoPlay;
             ENG_TYPE = GlobalVariable[0].EngType;
             AUTO_LOG = GlobalVariable[0].autoLog;
@@ -182,16 +180,16 @@ namespace ToastFish.Model.SqliteControl
             CountList = DataBase.Query<BookCount>($"select * from Count where bookName = '{TABLE_NAME}'", Temp);
             var CountArray = CountList.ToArray();
             List<int> Output = new List<int>();
-           // foreach (var OneCount in CountArray)
-           // {
-                //if (OneCount.bookName == TABLE_NAME)
-                //{
-                    Output.Add(CountArray[0].current);
-                    Output.Add(CountArray[0].number);
-                    return Output;
-               // }
-           // }
-           // return Output;
+            // foreach (var OneCount in CountArray)
+            // {
+            //if (OneCount.bookName == TABLE_NAME)
+            //{
+            Output.Add(CountArray[0].current);
+            Output.Add(CountArray[0].number);
+            return Output;
+            // }
+            // }
+            // return Output;
         }
         #endregion
 
@@ -201,25 +199,26 @@ namespace ToastFish.Model.SqliteControl
         /// </summary>
         public void SelectWordList()
         {
-           
+
             if (TABLE_NAME.IndexOf("自定义") != -1)
                 TABLE_NAME = "GRE_2";
 
             //String cmdtext =$"SELECT name FROM PRAGMA_TABLE_INFO('{TABLE_NAME}')";
             String cmdtext = $"PRAGMA table_info({TABLE_NAME})";
             SQLiteCommand Update = DataBase.CreateCommand();
-            Update.CommandText= cmdtext;
+            Update.CommandText = cmdtext;
             var dr = Update.ExecuteReader();
-            List <string> HeadTileList = new List<string>();
+            List<string> HeadTileList = new List<string>();
             while (dr.Read())//loop through the various columns and their info
             {
-                string name = (string) dr.GetValue(1);//0:cid;1:name; 2:type;3:notnull;4:dflt_value;5:pk
+                string name = (string)dr.GetValue(1);//0:cid;1:name; 2:type;3:notnull;4:dflt_value;5:pk
                 HeadTileList.Add(name);
                 //Console.WriteLine(name);
             }
             dr.Close();
-            if (HeadTileList.Contains("difficulty") == false){
-                Update.CommandText =$"ALTER TABLE {TABLE_NAME} ADD COLUMN difficulty REAL NOT NULL DEFAULT {Parameters.diffcultyDefaultValue}";
+            if (HeadTileList.Contains("difficulty") == false)
+            {
+                Update.CommandText = $"ALTER TABLE {TABLE_NAME} ADD COLUMN difficulty REAL NOT NULL DEFAULT {Parameters.diffcultyDefaultValue}";
                 Update.ExecuteNonQuery();
             }
             if (HeadTileList.Contains("daysBetweenReviews") == false)
@@ -246,26 +245,31 @@ namespace ToastFish.Model.SqliteControl
                 if (cardi.status != Cardstatus.Reviewed)
                     NewCardLst.Add(cardi);
                 else
-                    ReviewedCardLst.Add(cardi);     
+                    ReviewedCardLst.Add(cardi);
             }
         }
 
-        public void updateCardDateBase(List <Card> cardList)
+        public void updateCardDateBase(List<Card> cardList)
         {
             SQLiteCommand Update = DataBase.CreateCommand();
 
-            foreach (var card in cardList) {
-                String Command = $"UPDATE {TABLE_NAME} SET status = {(int)card.status} WHERE wordRank = {card.word.wordRank};";
-                Command += $"\nUPDATE {TABLE_NAME} SET difficulty ={card.difficulty} WHERE wordRank = {card.word.wordRank};";
-                Command += $"\nUPDATE {TABLE_NAME} SET daysBetweenReviews ={card.daysBetweenReviews} WHERE wordRank = {card.word.wordRank};";
-                Command += $"\nUPDATE {TABLE_NAME} SET lastScore ={card.lastScore} WHERE wordRank = {card.word.wordRank};";
-                Command += $"\nUPDATE {TABLE_NAME} SET dateLastReviewed ='{card.dateLastReviewed}' WHERE wordRank = {card.word.wordRank};";
+            foreach (var card in cardList)
+            {
+                /* String Command = $"UPDATE {TABLE_NAME} SET status = {(int)card.status} WHERE wordRank = {card.word.wordRank};";
+                 Command += $"\nUPDATE {TABLE_NAME} SET difficulty ={card.difficulty} WHERE wordRank = {card.word.wordRank};";
+                 Command += $"\nUPDATE {TABLE_NAME} SET daysBetweenReviews ={card.daysBetweenReviews} WHERE wordRank = {card.word.wordRank};";
+                 Command += $"\nUPDATE {TABLE_NAME} SET lastScore ={card.lastScore} WHERE wordRank = {card.word.wordRank};";
+                 Command += $"\nUPDATE {TABLE_NAME} SET dateLastReviewed ='{card.dateLastReviewed}' WHERE wordRank = {card.word.wordRank};";*/
+                String Command = $"UPDATE {TABLE_NAME} SET status = {(int)card.status}, " +
+                    $"difficulty ={card.difficulty}, daysBetweenReviews ={card.daysBetweenReviews}, " +
+                    $"lastScore ={card.lastScore}, dateLastReviewed ='{card.dateLastReviewed}' " +
+                    $"WHERE wordRank = {card.word.wordRank};";
                 Update.CommandText = Command;
                 Update.ExecuteNonQuery();
                 //card.word
             }
 
-        } 
+        }
 
         public void GetOverdueReviewedCardList(int maxReviewedCardNumer, out List<Card> usedReviewedCardLst)
         {
@@ -275,7 +279,8 @@ namespace ToastFish.Model.SqliteControl
             if (ReviewedCardLst.Count() < maxReviewedCardNumer)
                 maxReviewedCardNumer = ReviewedCardLst.Count();
 
-            ReviewedCardLst.Sort((b, a) => {
+            ReviewedCardLst.Sort((b, a) =>
+            {
                 // compare a to b to get decending order
                 int result = a.percentOverdue.CompareTo(b.percentOverdue);
                 return result;
@@ -285,13 +290,13 @@ namespace ToastFish.Model.SqliteControl
             {
                 Card card0 = ReviewedCardLst[0];
                 usedReviewedCardLst.Add(card0);
-                ReviewedCardLst.RemoveAt(0);             
+                ReviewedCardLst.RemoveAt(0);
             }
         }
 
         public void GenerateRandomNewCardList(int maxNewCardNumber, out List<Card> usedNewCardLst)
         {
-           //SelectWordList();
+            //SelectWordList();
 
             //List<Card>
             usedNewCardLst = new List<Card>();
@@ -325,7 +330,7 @@ namespace ToastFish.Model.SqliteControl
 
             //把所有没背过的单词序号都存在WordList里了
             List<Word> WordList = new List<Word>();
-            foreach(var Word in AllWordList)
+            foreach (var Word in AllWordList)
             {
                 if (Word.status == 0) //单词是否背过
                 {
@@ -333,7 +338,7 @@ namespace ToastFish.Model.SqliteControl
                 }
             }
 
-            if (WordList.Count() == 0)  
+            if (WordList.Count() == 0)
                 return Result;
             else if (WordList.Count() < Number)
                 Number = WordList.Count();
@@ -460,7 +465,7 @@ namespace ToastFish.Model.SqliteControl
             for (int i = 0; i < 2; i++)
             {
                 int Index = Rd.Next(WordList.Count);//下标
-                if(CurrentWord.wordRank == Index + 1)
+                if (CurrentWord.wordRank == Index + 1)
                 {
                     i--;
                     continue;
@@ -504,7 +509,7 @@ namespace ToastFish.Model.SqliteControl
         public double lastScore { get; set; }
         public String dateLastReviewed { get; set; }
     }
-    
+
     [Serializable]
     public class BookCount
     {
@@ -512,7 +517,7 @@ namespace ToastFish.Model.SqliteControl
         public int number { get; set; }
         public int current { get; set; }
     }
-    
+
     [Serializable]
     public class GoinWord
     {

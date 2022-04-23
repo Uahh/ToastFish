@@ -97,12 +97,14 @@ namespace ToastFish.Model.SM2plus
                         status = Cardstatus.Reviewed; 
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }
-                    if (curScore == Parameters.Good)   {
+                    }else if (curScore == Parameters.Good)   {
                         status = Cardstatus.Step2;    
                         dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayGood);
+                    }else if (curScore == Parameters.Hard)  {
+                        //status = Cardstatus.Step1;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayHard);
                     }
-                    if  (curScore == Parameters.Again){
+                    else if  (curScore == Parameters.Again){
                         status = Cardstatus.Step1;   
                         dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayAgain);
                     }
@@ -112,13 +114,14 @@ namespace ToastFish.Model.SM2plus
                         status = Cardstatus.Reviewed; 
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }
-                    if (curScore == Parameters.Good) {
+                    }else if (curScore == Parameters.Good) {
                         status = Cardstatus.Reviewed; 
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }
-                    if (curScore == Parameters.Again){ 
+                    }else if (curScore == Parameters.Hard) {
+                        //status = Cardstatus.Step2;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayHard);
+                    }else if (curScore == Parameters.Again){ 
                         status = Cardstatus.Step1;   
                         dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayAgain); 
                     }
@@ -133,37 +136,33 @@ namespace ToastFish.Model.SM2plus
                     }
                     break;
                 case Cardstatus.RelearnStep1:
-                    //isLapsed = true;
-                    if (curScore == Parameters.Easy)
-                    {
+                    //isLapsed = true; do not update last score for relearn steps
+                    if (curScore == Parameters.Easy)  {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }
-                    if (curScore == Parameters.Good)
-                    {
+                    }else if (curScore == Parameters.Good)  {
                         status = Cardstatus.RelearnStep2;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewGood);
-                    }
-                    if (curScore == Parameters.Again)
-                    {
+                    }else if (curScore == Parameters.Hard)  {
+                        //status = Cardstatus.RelearnStep1;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewHard);
+                    }else if (curScore == Parameters.Again) {
                         status = Cardstatus.RelearnStep1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewAgain);
                     }
                     break;
                 case Cardstatus.RelearnStep2:
                     //isLapsed = true;
-                    if (curScore == Parameters.Easy)
-                    {
+                    if (curScore == Parameters.Easy) {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }
-                    if (curScore == Parameters.Good)
-                    {
+                    }else if (curScore == Parameters.Good) {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }
-                    if (curScore == Parameters.Again)
-                    {
+                    }else if (curScore == Parameters.Hard) {
+                        //status = Cardstatus.RelearnStep2;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewHard);
+                    }else if (curScore == Parameters.Again) {
                         status = Cardstatus.RelearnStep1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewAgain);
                     }
