@@ -148,7 +148,6 @@
     <Compile Include="Model\PushControl\WordType.cs" />
     <Compile Include="Model\SM2plus\Card.cs" />
     <Compile Include="Model\SM2plus\Parameters.cs" />
-    <Compile Include="Model\SM2plus\Algorithm.cs" />
     <Compile Include="Model\SqliteControl\Select.cs" />
     <Compile Include="Model\StartWithWindows\HotKey.cs" />
     <Compile Include="Model\StartWithWindows\StartWithWindows.cs" />

@@ -614,8 +614,10 @@ namespace ToastFish.Model.PushControl
                 return result;
             });
             List<Word> RandomList = new List<Word>();
+            List<Word> AllFinshedWordList = new List<Word>();
 
             foreach (var cardi in FinishedCardLst) {
+                AllFinshedWordList.Add(cardi.word);
                 if (cardi.lastScore != Parameters.Easy)
                     RandomList.Add(cardi.word);
             }
@@ -626,6 +628,12 @@ namespace ToastFish.Model.PushControl
             }
             PushMessage("结束了！恭喜！");
 
+            if (Select.AUTO_LOG != 0)
+            {
+                CreateLog Log = new CreateLog();
+                String LogName = "Log\\" + DateTime.Now.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', '-') + "_英语.xlsx";
+                Log.OutputExcel(LogName, AllFinshedWordList, "英语");
+            }
 
         }
 
