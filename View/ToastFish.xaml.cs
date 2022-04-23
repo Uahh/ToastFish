@@ -47,7 +47,7 @@ namespace ToastFish
             this.Visibility = Visibility.Hidden;
             Se.LoadGlobalConfig();
             ContextMenu();
-            new HotKey(Key.Oem3, KeyModifier.Alt , OnHotKeyHandler);
+            new HotKey(Key.Q, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D1, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D2, KeyModifier.Alt , OnHotKeyHandler);
             new HotKey(Key.D3, KeyModifier.Alt , OnHotKeyHandler);
@@ -65,7 +65,7 @@ namespace ToastFish
             Debug.WriteLine("key pressed:" + key);
             switch (key) 
             {
-                case "Oem3":                    
+                case "Q":                    
                     Begin_Click(null, null);
                     break;
                 case "D1":
@@ -146,6 +146,7 @@ namespace ToastFish
         System.Windows.Forms.ToolStripMenuItem ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 
         System.Windows.Forms.ToolStripMenuItem SetAutoPlay = new System.Windows.Forms.ToolStripMenuItem();
+        System.Windows.Forms.ToolStripMenuItem SetAutoLog = new System.Windows.Forms.ToolStripMenuItem();
 
         private new void ContextMenu()
         {
@@ -171,6 +172,13 @@ namespace ToastFish
                 SetAutoPlay.Checked = true;
             else
                 SetAutoPlay.Checked = false;
+
+            SetAutoLog.Text = "自动日志";
+            SetAutoLog.Click += new EventHandler(AutoLog_Click);
+            if (Select.AUTO_LOG != 0)
+                SetAutoLog.Checked = true;
+            else
+                SetAutoLog.Checked = false;
 
 
             ImportWords.Text = "导入单词";
@@ -320,6 +328,7 @@ namespace ToastFish
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetNumber);
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetEngType);
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetAutoPlay);
+            ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(SetAutoLog);
             ((ToolStripDropDownItem)Cms.Items[5]).DropDownItems.Add(ResetLearingStatus);
             
             ((ToolStripDropDownItem)Cms.Items[6]).DropDownItems.Add(Shortcuts);
@@ -642,12 +651,12 @@ namespace ToastFish
         }
         private void ShortCuts_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("ALT+~：开始内置单词学习\nALT+数字1到4:对应点击按钮1到4","快捷方式");
+            System.Windows.Forms.MessageBox.Show("ALT+Q：开始内置单词学习\nALT+1到4：对应点击按钮1到4", "版本号:2.3.2");
         }
 
         private void AutoPlay_Click(object sender, EventArgs e)
         {
-            (sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            //sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
             if (Select.AUTO_PLAY == 0)
             {
                 Select.AUTO_PLAY = 1;
@@ -656,6 +665,22 @@ namespace ToastFish
             else
             {
                 Select.AUTO_PLAY = 0;
+                (sender as ToolStripMenuItem).Checked = false;
+            }
+            Se.UpdateGlobalConfig();
+        }
+
+        private void AutoLog_Click(object sender, EventArgs e)
+        {
+            //(sender as ToolStripMenuItem).Checked = !(sender as ToolStripMenuItem).Checked;
+            if (Select.AUTO_LOG == 0)
+            {
+                Select.AUTO_LOG = 1;
+                (sender as ToolStripMenuItem).Checked = true;
+            }
+            else
+            {
+                Select.AUTO_LOG = 0;
                 (sender as ToolStripMenuItem).Checked = false;
             }
             Se.UpdateGlobalConfig();

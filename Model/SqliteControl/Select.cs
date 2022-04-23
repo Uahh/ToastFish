@@ -15,11 +15,13 @@ namespace ToastFish.Model.SqliteControl
             DataBase = ConnectToDatabase();
             DataBase.Open();
         }
+   
 
         public static string TABLE_NAME = "CET4_1";  // 当前书籍名字
         public static int WORD_NUMBER = 10;  // 当前单词数量
         public static int ENG_TYPE = 2;  // 英语类型1：美语，2：英语
         public static int AUTO_PLAY = 1;  // 英语自动发音
+        public static int AUTO_LOG  = 1;  // 英语自动发音
         public SQLiteConnection DataBase;
         public IEnumerable<Word> AllWordList;
         public IEnumerable<JpWord> AllJpWordList;
@@ -130,12 +132,18 @@ namespace ToastFish.Model.SqliteControl
                 Update.CommandText = $"ALTER TABLE Global ADD COLUMN EngType INTEGER NOT NULL DEFAULT {ENG_TYPE}";
                 Update.ExecuteNonQuery();
             }
+            if (HeadTileList.Contains("autoLog") == false)
+            {
+                Update.CommandText = $"ALTER TABLE Global ADD COLUMN autoLog INTEGER NOT NULL DEFAULT {AUTO_LOG}";
+                Update.ExecuteNonQuery();
+            }
             Global Temp = new Global();
             var GlobalVariable = DataBase.Query<Global>("select * from Global", Temp).ToArray();
             WORD_NUMBER = int.Parse(GlobalVariable[0].currentWordNumber);
             TABLE_NAME = GlobalVariable[0].currentBookName;            
             AUTO_PLAY = GlobalVariable[0].autoPlay;
             ENG_TYPE = GlobalVariable[0].EngType;
+            AUTO_LOG = GlobalVariable[0].autoLog;
         }
 
         public void UpdateGlobalConfig()
@@ -144,7 +152,8 @@ namespace ToastFish.Model.SqliteControl
             Update.CommandText = $"UPDATE Global SET currentWordNumber ='{WORD_NUMBER}'" +
                 $", currentBookName = '{TABLE_NAME}'" +
                 $", autoPlay = '{AUTO_PLAY}'" +
-                $", EngType = '{ENG_TYPE}'";
+                $", EngType = '{ENG_TYPE}' " +
+                $", autoLog = '{AUTO_LOG}'";
             Update.ExecuteNonQuery();
         }
 
@@ -523,6 +532,7 @@ namespace ToastFish.Model.SqliteControl
         public string currentBookName { get; set; }
         public int autoPlay { get; set; }
         public int EngType { get; set; }
+        public int autoLog { get; set; }
     }
 
     [Serializable]
