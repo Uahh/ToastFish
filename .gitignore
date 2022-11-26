@@ -1,4 +1,5 @@
 obj/
-.vs/
 bin/
 token.txt
+.vs/
+.github/
