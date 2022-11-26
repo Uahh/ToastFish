@@ -33,7 +33,7 @@ namespace ToastFish.Model.PushControl
         public static new void Recitation(Object Words)
         {
             WordType WordList = (WordType)Words;
-
+            PushCustomizeWords pushCustomizeWords = new PushCustomizeWords();
             List<CustomizeWord> RandomList;
 
             if (WordList.CustWordList == null)
@@ -57,25 +57,25 @@ namespace ToastFish.Model.PushControl
                 CurrentWord = RandomList[0];
                 PushOneWord(CurrentWord);
 
-                WORD_CURRENT_STATUS = 2;
-                while (WORD_CURRENT_STATUS == 2)
+                pushCustomizeWords.WORD_CURRENT_STATUS = 2;
+                while (pushCustomizeWords.WORD_CURRENT_STATUS == 2)
                 {
-                    var task = PushWords.ProcessToastNotificationRecitation();
+                    var task = pushCustomizeWords.ProcessToastNotificationRecitation();
                     if (task.Result == 0)
                     {
-                        WORD_CURRENT_STATUS = 1;
+                        pushCustomizeWords.WORD_CURRENT_STATUS = 1;
                     }
                     else if (task.Result == 1)
                     {
-                        WORD_CURRENT_STATUS = 0;
+                        pushCustomizeWords.WORD_CURRENT_STATUS = 0;
                     }
                 }
              
                 RandomList.Remove(CurrentWord);
-                if (WORD_CURRENT_STATUS == 0)
+                if (pushCustomizeWords.WORD_CURRENT_STATUS == 0)
                     RandomList.Add(CurrentWord);
             }
-            PushMessage("背完了！");
+            pushCustomizeWords.PushMessage("背完了！");
         }
     }
 }

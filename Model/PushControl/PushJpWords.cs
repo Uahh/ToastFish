@@ -13,14 +13,14 @@ namespace ToastFish.Model.PushControl
 {
     class PushJpWords : PushWords
     {
-        public static JpWord GetRandomWord(List<JpWord> WordList)
+        public JpWord GetRandomWord(List<JpWord> WordList)
         {
             Random Rd = new Random();
             int Index = Rd.Next(WordList.Count);
             return WordList[Index];
         }
 
-        public static string GetJapaneseVoiceName()
+        public string GetJapaneseVoiceName()
         {
             SpeechSynthesizer synth = new SpeechSynthesizer();
             foreach (InstalledVoice voice in synth.GetInstalledVoices())
@@ -32,7 +32,7 @@ namespace ToastFish.Model.PushControl
             return "";
         }
 
-        public static void PushOneWord(JpWord CurrentWord)
+        public void PushOneWord(JpWord CurrentWord)
         {
             ToastNotificationManagerCompat.History.Clear();
             string OneLine = CurrentWord.headWord + "  (" + CurrentWord.hiragana + ")";
@@ -60,7 +60,7 @@ namespace ToastFish.Model.PushControl
             .Show();
         }
 
-        public static void PushOneTransQuestion(JpWord CurrentWord, string B, string C)
+        public void PushOneTransQuestion(JpWord CurrentWord, string B, string C)
         {
             string Question = CurrentWord.tranCN;
             string A = CurrentWord.headWord;
@@ -138,7 +138,7 @@ namespace ToastFish.Model.PushControl
         public static new void Recitation(Object Words)
         {
             WordType WordList = (WordType)Words;
-
+            PushJpWords pushJpWords = new PushJpWords();
             Select Query = new Select();
             List<JpWord> RandomList;
             bool ImportFlag = true;
@@ -155,14 +155,14 @@ namespace ToastFish.Model.PushControl
 
             if (RandomList.Count == 0 && ImportFlag == false)
             {
-                PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
+                pushJpWords.PushMessage("好..好像词库里没有单词了，您就是摸鱼之王！");
                 return;
             }
             else if (RandomList.Count == 0 && ImportFlag == true)
             {
                 return;
             }
-            List<JpWord> CopyList = Clone<JpWord>(RandomList);
+            List<JpWord> CopyList = pushJpWords.Clone<JpWord>(RandomList);
 
             if (ImportFlag == false)
             {
@@ -174,29 +174,29 @@ namespace ToastFish.Model.PushControl
             JpWord CurrentWord = new JpWord();
             while (CopyList.Count != 0)
             {
-                if (WORD_CURRENT_STATUS != 3)
-                    CurrentWord = GetRandomWord(CopyList);
-                PushOneWord(CurrentWord);
+                if (pushJpWords.WORD_CURRENT_STATUS != 3)
+                    CurrentWord = pushJpWords.GetRandomWord(CopyList);
+                pushJpWords.PushOneWord(CurrentWord);
 
-                WORD_CURRENT_STATUS = 2;
-                while (WORD_CURRENT_STATUS == 2)
+                pushJpWords.WORD_CURRENT_STATUS = 2;
+                while (pushJpWords.WORD_CURRENT_STATUS == 2)
                 {
-                    var task = PushWords.ProcessToastNotificationRecitation();
+                    var task = pushJpWords.ProcessToastNotificationRecitation();
                     if (task.Result == 0)
                     {
-                        WORD_CURRENT_STATUS = 1;
+                        pushJpWords.WORD_CURRENT_STATUS = 1;
                     }
                     else if (task.Result == 1)
                     {
-                        WORD_CURRENT_STATUS = 0;
+                        pushJpWords.WORD_CURRENT_STATUS = 0;
                     }
                     else if (task.Result == 2)
                     {
-                        WORD_CURRENT_STATUS = 3;
+                        pushJpWords.WORD_CURRENT_STATUS = 3;
                         SpeechSynthesizer synth = new SpeechSynthesizer();
                         try
                         {
-                            synth.SelectVoice(GetJapaneseVoiceName());
+                            synth.SelectVoice(pushJpWords.GetJapaneseVoiceName());
                         }
                         catch
                         {
@@ -205,7 +205,7 @@ namespace ToastFish.Model.PushControl
                         synth.SpeakAsync(CurrentWord.hiragana);
                     }
                 }
-                if (WORD_CURRENT_STATUS == 1)
+                if (pushJpWords.WORD_CURRENT_STATUS == 1)
                 {
                     if (ImportFlag == false)
                     {
@@ -215,7 +215,7 @@ namespace ToastFish.Model.PushControl
                     CopyList.Remove(CurrentWord);
                 }
             }
-            PushMessage("背完了！接下来开始测验！");
+            pushJpWords.PushMessage("背完了！接下来开始测验！");
             Thread.Sleep(3000);
 
 
@@ -223,46 +223,47 @@ namespace ToastFish.Model.PushControl
             {
                 ToastNotificationManagerCompat.History.Clear();
                 Thread.Sleep(500);
-                CurrentWord = GetRandomWord(RandomList);
+                CurrentWord = pushJpWords.GetRandomWord(RandomList);
                 List<JpWord> FakeWordList = Query.GetRandomJpWords(2);
 
-                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
+                pushJpWords.PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
 
-                QUESTION_CURRENT_STATUS = 2;
-                while (QUESTION_CURRENT_STATUS == 2)
+                pushJpWords.QUESTION_CURRENT_STATUS = 2;
+                while (pushJpWords.QUESTION_CURRENT_STATUS == 2)
                 {
-                    var task = ProcessToastNotificationQuestion();
+                    var task = pushJpWords.ProcessToastNotificationQuestion();
                     if (task.Result == 1)
-                        QUESTION_CURRENT_STATUS = 1;
+                        pushJpWords.QUESTION_CURRENT_STATUS = 1;
                     else if (task.Result == 0)
-                        QUESTION_CURRENT_STATUS = 0;
+                        pushJpWords.QUESTION_CURRENT_STATUS = 0;
                     else if (task.Result == -1)
-                        QUESTION_CURRENT_STATUS = -1;
+                        pushJpWords.QUESTION_CURRENT_STATUS = -1;
                 }
 
-                if (QUESTION_CURRENT_STATUS == 1)
+                if (pushJpWords.QUESTION_CURRENT_STATUS == 1)
                 {
                     RandomList.Remove(CurrentWord);
                     Thread.Sleep(500);
                 }
-                else if (QUESTION_CURRENT_STATUS == 0)
+                else if (pushJpWords.QUESTION_CURRENT_STATUS == 0)
                 {
                     //CopyList.Remove(CurrentWord);
                     new ToastContentBuilder()
-                    .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
+                    .AddText("错误 正确答案：" + pushJpWords.AnswerDict[pushJpWords.QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
                     .Show();
                     Thread.Sleep(3000);
                 }
             }
 
             ToastNotificationManagerCompat.History.Clear();
-            PushMessage("结束了！恭喜！");
+            pushJpWords.PushMessage("结束了！恭喜！");
         }
 
         public static new void UnorderWord(Object Num)
         {
             int Number = (int)Num;
             Select Query = new Select();
+            PushJpWords pushJpWords = new PushJpWords();
             List<JpWord> TestList = Query.GetRandomJpWords(Number);
 
             CreateLog Log = new CreateLog();
@@ -275,39 +276,39 @@ namespace ToastFish.Model.PushControl
             {
                 ToastNotificationManagerCompat.History.Clear();
                 Thread.Sleep(500);
-                CurrentWord = GetRandomWord(TestList);
+                CurrentWord = pushJpWords.GetRandomWord(TestList);
                 List<JpWord> FakeWordList = Query.GetRandomJpWords(2);
 
-                PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
+                pushJpWords.PushOneTransQuestion(CurrentWord, FakeWordList[0].headWord, FakeWordList[1].headWord);
 
-                QUESTION_CURRENT_STATUS = 2;
-                while (QUESTION_CURRENT_STATUS == 2)
+                pushJpWords.QUESTION_CURRENT_STATUS = 2;
+                while (pushJpWords.QUESTION_CURRENT_STATUS == 2)
                 {
-                    var task = ProcessToastNotificationQuestion();
+                    var task = pushJpWords.ProcessToastNotificationQuestion();
                     if (task.Result == 1)
-                        QUESTION_CURRENT_STATUS = 1;
+                        pushJpWords.QUESTION_CURRENT_STATUS = 1;
                     else if (task.Result == 0)
-                        QUESTION_CURRENT_STATUS = 0;
+                        pushJpWords.QUESTION_CURRENT_STATUS = 0;
                     else if (task.Result == -1)
-                        QUESTION_CURRENT_STATUS = -1;
+                        pushJpWords.QUESTION_CURRENT_STATUS = -1;
                 }
 
-                if (QUESTION_CURRENT_STATUS == 1)
+                if (pushJpWords.QUESTION_CURRENT_STATUS == 1)
                 {
                     TestList.Remove(CurrentWord);
                     Thread.Sleep(500);
                 }
-                else if (QUESTION_CURRENT_STATUS == 0)
+                else if (pushJpWords.QUESTION_CURRENT_STATUS == 0)
                 {
                     //CopyList.Remove(CurrentWord);
                     new ToastContentBuilder()
-                    .AddText("错误 正确答案：" + AnswerDict[QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
+                    .AddText("错误 正确答案：" + pushJpWords.AnswerDict[pushJpWords.QUESTION_CURRENT_RIGHT_ANSWER.ToString()] + '.' + CurrentWord.headWord)
                     .Show();
                     Thread.Sleep(3000);
                 }
             }
             ToastNotificationManagerCompat.History.Clear();
-            PushMessage("结束了！恭喜！");
+            pushJpWords.PushMessage("结束了！恭喜！");
         }
     }
 }

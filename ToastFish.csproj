@@ -250,6 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="chika64.ico" />
+    <Content Include=".gitignore" />
     <Content Include="Resources\使用说明.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

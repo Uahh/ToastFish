@@ -9,12 +9,12 @@ namespace ToastFish.Model.SM2plus
 {
     public enum Cardstatus
     {
-        New           = 0,
-        Step1         = 1,
-        Step2         = 2,
-        RelearnStep1  = 3,
-        RelearnStep2  = 4,
-        Reviewed      = 5
+        New = 0,
+        Step1 = 1,
+        Step2 = 2,
+        RelearnStep1 = 3,
+        RelearnStep2 = 4,
+        Reviewed = 5
     }
     public class Card
     {
@@ -26,9 +26,11 @@ namespace ToastFish.Model.SM2plus
         public Cardstatus status;
         public Word word;
 
-        public double percentOverdue {
-            get{
-                double podue =0;
+        public double percentOverdue
+        {
+            get
+            {
+                double podue = 0;
                 if (status == Cardstatus.Reviewed)
                 {
                     bool correct = lastScore >= Parameters.Correct;
@@ -38,7 +40,9 @@ namespace ToastFish.Model.SM2plus
                         podue = Math.Min(2, daysSpan.TotalDays / daysBetweenReviews);
                     else
                         podue = 1;
-                } else if (status == Cardstatus.New || status == Cardstatus.Step1) { 
+                }
+                else if (status == Cardstatus.New || status == Cardstatus.Step1)
+                {
                 }
 
                 return podue;
@@ -57,73 +61,91 @@ namespace ToastFish.Model.SM2plus
             difficulty = wd.difficulty;
             daysBetweenReviews = wd.daysBetweenReviews;
             lastScore = wd.lastScore;
-            status = (Cardstatus) wd.status;
+            status = (Cardstatus)wd.status;
 
             bool isSuccess1;
-            if (status== Cardstatus.Reviewed)
+            if (status == Cardstatus.Reviewed)
             {
-                if ((wd.dateLastReviewed != null) && (wd.dateLastReviewed != "")) {
+                if ((wd.dateLastReviewed != null) && (wd.dateLastReviewed != ""))
+                {
                     isSuccess1 = DateTime.TryParse(wd.dateLastReviewed, out DateTime tempDT);
-                    if (isSuccess1)                    
+                    if (isSuccess1)
                         dateLastReviewed = tempDT;//update                    
                     else
                         dateLastReviewed = DateTime.Now;
-                }                              
-            }           
+                }
+            }
 
         }
 
-        public void reset() {
+        public void reset()
+        {
             difficulty = Parameters.diffcultyDefaultValue;
             daysBetweenReviews = Parameters.daysBetweenReviewsDefaultValue;
             lastScore = Parameters.None;
         }
 
-        public bool isDue() {
+        public bool isDue()
+        {
             bool rst = false;
             DateTime curTime = DateTime.Now;
             if (curTime >= dateLearingDue)
                 rst = true;
             return rst;
         }
-             
 
-        public void updateCard(double curScore) {
-            bool isLapsed = false;            
-            switch (status) {
+
+        public void updateCard(double curScore)
+        {
+            bool isLapsed = false;
+            switch (status)
+            {
                 case Cardstatus.New:
                 case Cardstatus.Step1:
-                    if (curScore == Parameters.Easy)   { 
-                        status = Cardstatus.Reviewed; 
+                    if (curScore == Parameters.Easy)
+                    {
+                        status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }else if (curScore == Parameters.Good)   {
-                        status = Cardstatus.Step2;    
-                        dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayGood);
-                    }else if (curScore == Parameters.Hard)  {
+                    }
+                    else if (curScore == Parameters.Good)
+                    {
+                        status = Cardstatus.Step2;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayGood);
+                    }
+                    else if (curScore == Parameters.Hard)
+                    {
                         //status = Cardstatus.Step1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayHard);
                     }
-                    else if  (curScore == Parameters.Again){
-                        status = Cardstatus.Step1;   
-                        dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayAgain);
+                    else if (curScore == Parameters.Again)
+                    {
+                        status = Cardstatus.Step1;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayAgain);
                     }
                     break;
                 case Cardstatus.Step2:
-                    if (curScore == Parameters.Easy) { 
-                        status = Cardstatus.Reviewed; 
+                    if (curScore == Parameters.Easy)
+                    {
+                        status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }else if (curScore == Parameters.Good) {
-                        status = Cardstatus.Reviewed; 
+                    }
+                    else if (curScore == Parameters.Good)
+                    {
+                        status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
                         lastScore = curScore;
-                    }else if (curScore == Parameters.Hard) {
+                    }
+                    else if (curScore == Parameters.Hard)
+                    {
                         //status = Cardstatus.Step2;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayHard);
-                    }else if (curScore == Parameters.Again){ 
-                        status = Cardstatus.Step1;   
-                        dateLearingDue   = DateTime.Now.AddMinutes(Parameters.delayAgain); 
+                    }
+                    else if (curScore == Parameters.Again)
+                    {
+                        status = Cardstatus.Step1;
+                        dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayAgain);
                     }
                     break;
                 case Cardstatus.Reviewed:
@@ -137,32 +159,46 @@ namespace ToastFish.Model.SM2plus
                     break;
                 case Cardstatus.RelearnStep1:
                     //isLapsed = true; do not update last score for relearn steps
-                    if (curScore == Parameters.Easy)  {
+                    if (curScore == Parameters.Easy)
+                    {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }else if (curScore == Parameters.Good)  {
+                    }
+                    else if (curScore == Parameters.Good)
+                    {
                         status = Cardstatus.RelearnStep2;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewGood);
-                    }else if (curScore == Parameters.Hard)  {
+                    }
+                    else if (curScore == Parameters.Hard)
+                    {
                         //status = Cardstatus.RelearnStep1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewHard);
-                    }else if (curScore == Parameters.Again) {
+                    }
+                    else if (curScore == Parameters.Again)
+                    {
                         status = Cardstatus.RelearnStep1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewAgain);
                     }
                     break;
                 case Cardstatus.RelearnStep2:
                     //isLapsed = true;
-                    if (curScore == Parameters.Easy) {
+                    if (curScore == Parameters.Easy)
+                    {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }else if (curScore == Parameters.Good) {
+                    }
+                    else if (curScore == Parameters.Good)
+                    {
                         status = Cardstatus.Reviewed;
                         dateLastReviewed = DateTime.Now;
-                    }else if (curScore == Parameters.Hard) {
+                    }
+                    else if (curScore == Parameters.Hard)
+                    {
                         //status = Cardstatus.RelearnStep2;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewHard);
-                    }else if (curScore == Parameters.Again) {
+                    }
+                    else if (curScore == Parameters.Again)
+                    {
                         status = Cardstatus.RelearnStep1;
                         dateLearingDue = DateTime.Now.AddMinutes(Parameters.delayReviewAgain);
                     }
@@ -170,8 +206,8 @@ namespace ToastFish.Model.SM2plus
                 default:
                     break;
             }
-            if ((status!=Cardstatus.Reviewed) && (isLapsed != true)) return;
-           
+            if ((status != Cardstatus.Reviewed) && (isLapsed != true)) return;
+
             dateLastReviewed = DateTime.Now;
             bool correct = curScore >= Parameters.Correct;
             TimeSpan daysSpan = new TimeSpan(DateTime.Now.Ticks - dateLastReviewed.Ticks);
@@ -181,19 +217,16 @@ namespace ToastFish.Model.SM2plus
             else
                 podue = 1;
             difficulty += podue * (8 - 10 * curScore) / 17;
-            if (difficulty < 0) 
+            if (difficulty < 0)
                 difficulty = 0;
             if (difficulty > 1)
-                difficulty = 1; 
+                difficulty = 1;
             double dfweight = 3 - 1.7 * difficulty;
             Random rnd = new Random();
-            if (correct)               
+            if (correct)
                 daysBetweenReviews *= (1 + (dfweight - 1) * podue * (0.95 + 0.1 * rnd.NextDouble()));
             else
-                daysBetweenReviews *= 1 / (1 + 3 * difficulty);            
-            
+                daysBetweenReviews *= 1 / (1 + 3 * difficulty);
         }
-
-       
     }
 }

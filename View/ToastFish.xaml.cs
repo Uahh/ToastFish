@@ -28,6 +28,7 @@ namespace ToastFish
         
         ToastFishModel Vm = new ToastFishModel();
         Select Se = new Select();
+        PushWords pushWords = new PushWords();
         Thread thread = new Thread(new ParameterizedThreadStart(PushWords.Recitation));
         Dictionary<string, string> TablelDictionary = new Dictionary<string, string>(){
         {"CET4_1", "四级核心词汇"},{"CET4_3", "四级完整词汇"},{"CET6_1", "六级核心词汇"},
@@ -70,19 +71,19 @@ namespace ToastFish
                     Begin_Click(null, null);
                     break;
                 case "D1":
-                    PushWords.HotKeytObservable.raiseEvent("1");
+                    pushWords.HotKeytObservable.raiseEvent("1");
                     break;
                 case "D2":
-                    PushWords.HotKeytObservable.raiseEvent("2");
+                    pushWords.HotKeytObservable.raiseEvent("2");
                     break;
                 case "D3":
-                    PushWords.HotKeytObservable.raiseEvent("3");
+                    pushWords.HotKeytObservable.raiseEvent("3");
                     break;
                 case "D4":
-                    PushWords.HotKeytObservable.raiseEvent("4");
+                    pushWords.HotKeytObservable.raiseEvent("4");
                     break;
                 case "Oem3":
-                    PushWords.HotKeytObservable.raiseEvent("S");
+                    pushWords.HotKeytObservable.raiseEvent("S");
                     break;
                 default:
                     break;
@@ -249,7 +250,7 @@ namespace ToastFish
             RandomJpWord.Click += new EventHandler(RandomJpWordTest_Click);
             ToolStripItem Pdf = new ToolStripMenuItem("Star!!");
             Pdf.Click += new EventHandler(OpenPdf_Click);
-            ToolStripItem Use = new ToolStripMenuItem("使用说明");
+            ToolStripItem Use = new ToolStripMenuItem("使用说明(必读)");
             Use.Click += new EventHandler(HowToUse_Click);
             ToolStripItem Site = new ToolStripMenuItem("官方网站");
             Site.Click += new EventHandler(Site_Click);
@@ -388,13 +389,13 @@ namespace ToastFish
 
         private void SetNumber_Click(object sender, EventArgs e)
         {
-            Thread thread = new Thread(new ThreadStart(PushWords.SetWordNumber));
+            Thread thread = new Thread(new ThreadStart(pushWords.SetWordNumber));
             thread.Start();
         }
 
         private void SetEngType_Click(object sender, EventArgs e)
         {
-            Thread thread = new Thread(new ThreadStart(PushWords.SetEngType));
+            Thread thread = new Thread(new ThreadStart(pushWords.SetEngType));
             thread.Start();
         }
 
@@ -565,7 +566,7 @@ namespace ToastFish
             // else
             //{
             List<int> res = Se.SelectCount();
-                PushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
+                pushWords.PushMessage("当前词库：" + sender.ToString() + "\n当前进度：" + res[0].ToString() + "/" + res[1].ToString());
            // }
         }
 
@@ -582,7 +583,7 @@ namespace ToastFish
             }
             if (Select.TABLE_NAME == "StdJp_Mid" || Select.TABLE_NAME == "Goin")
                 Select.TABLE_NAME = "GRE_2";
-            thread = new Thread(new ParameterizedThreadStart(PushWords.UnorderWord));
+            thread = new Thread(new ParameterizedThreadStart(pushWords.UnorderWord));
             thread.Start(Select.WORD_NUMBER);
         }
 
@@ -642,12 +643,12 @@ namespace ToastFish
                
                 try {
                     Se.ResetTableCount();
-                    PushWords.PushMessage($"重置{TableName}完成！");
+                    pushWords.PushMessage($"重置{TableName}完成！");
                     //System.Windows.Forms.MessageBox.Show($"重置{TableName}完成！");
 
                 }
                 catch {
-                    PushWords.PushMessage($"重置{TableName}出错！");
+                    pushWords.PushMessage($"重置{TableName}出错！");
                    // System.Windows.Forms.MessageBox.Show($"重置{TableName}出错！");
                 }                
             }

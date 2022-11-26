@@ -18,8 +18,8 @@ namespace ToastFish.Model.SM2plus
         public const double delayHard = 5.5; // delay minitues for Good answer to new card
         public const double delayGood = 10; // delay minitues for Hard answer to new card
         public const double delayReviewAgain = 10; // delay minitues for Again answer to the reviewed Card 
-        public const double delayReviewHard =  15; // delay minitues for Hard answer to new card
-        public const double delayReviewGood  = 15; // delay minitues for Again answer to the reviewed Card
+        public const double delayReviewHard = 15; // delay minitues for Hard answer to new card
+        public const double delayReviewGood = 15; // delay minitues for Again answer to the reviewed Card
         public const double diffcultyDefaultValue = 0.3; // delay minitues for Good answer 
         public const double daysBetweenReviewsDefaultValue = 3; // delay minitues for Good answer 
     }
