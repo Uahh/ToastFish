@@ -47,7 +47,7 @@ namespace ToastFish.Model.PushControl
         public Dictionary<string, string> AnswerDict = new Dictionary<string, string> {
             {"0","A"},{"1","B"},{"2","C"},{"3","D"}
         };
-        public MyHotObservable HotKeytObservable = new MyHotObservable();
+        public static MyHotObservable HotKeytObservable = new MyHotObservable();
 
         /// <summary>
         /// 判断字符串是否为数字

@@ -67,23 +67,23 @@ namespace ToastFish
             Debug.WriteLine("key pressed:" + key);
             switch (key) 
             {
-                case "Q":                    
+                case "Q":
                     Begin_Click(null, null);
                     break;
                 case "D1":
-                    pushWords.HotKeytObservable.raiseEvent("1");
+                    PushWords.HotKeytObservable.raiseEvent("1");
                     break;
                 case "D2":
-                    pushWords.HotKeytObservable.raiseEvent("2");
+                    PushWords.HotKeytObservable.raiseEvent("2");
                     break;
                 case "D3":
-                    pushWords.HotKeytObservable.raiseEvent("3");
+                    PushWords.HotKeytObservable.raiseEvent("3");
                     break;
                 case "D4":
-                    pushWords.HotKeytObservable.raiseEvent("4");
+                    PushWords.HotKeytObservable.raiseEvent("4");
                     break;
                 case "Oem3":
-                    pushWords.HotKeytObservable.raiseEvent("S");
+                    PushWords.HotKeytObservable.raiseEvent("S");
                     break;
                 default:
                     break;
