@@ -39,8 +39,8 @@ jobs:
         nuget-version: '5.x'
 
     # NuGet restore
-    # - name: NuGet restore
-    #  run: nuget restore
+    - name: NuGet restore
+      run: nuget restore
 
     # Build
     - name: Build the solution
