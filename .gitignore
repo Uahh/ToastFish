@@ -3,5 +3,3 @@ bin/
 token.txt
 .vs/
 .github/
-ToastFishSetup/Debug
-ToastFishSetup/Release
