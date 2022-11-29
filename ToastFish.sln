@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30907.101
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToastFish", "ToastFish.csproj", "{E674C965-350B-4A72-9929-908BFB20F678}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ToastFishSetup", "ToastFishSetup\ToastFishSetup.vdproj", "{665C9D6B-34A2-4107-A106-01C051FED75B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,12 @@ Global
 		{E674C965-350B-4A72-9929-908BFB20F678}.Release|x64.Build.0 = Release|x64
 		{E674C965-350B-4A72-9929-908BFB20F678}.Release|x86.ActiveCfg = Release|x86
 		{E674C965-350B-4A72-9929-908BFB20F678}.Release|x86.Build.0 = Release|x86
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Debug|Any CPU.ActiveCfg = Debug
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Debug|x64.ActiveCfg = Debug
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Debug|x86.ActiveCfg = Debug
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Release|Any CPU.ActiveCfg = Release
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Release|x64.ActiveCfg = Release
+		{665C9D6B-34A2-4107-A106-01C051FED75B}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
