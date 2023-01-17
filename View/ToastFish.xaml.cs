@@ -406,7 +406,10 @@ namespace ToastFish
         {
             OpenFileDialog Dialog = new OpenFileDialog();
             Dialog.Filter = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls";
-            Dialog.ShowDialog();
+            if (Dialog.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+            {
+                return;
+            }
             String FileName = Dialog.FileName;
             CreateLog Log = new CreateLog();
             WordType Words = new WordType();
