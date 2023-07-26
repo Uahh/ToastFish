@@ -63,16 +63,16 @@ namespace ToastFish.Model.Mp3
                     bool iswave = isFileWave(value);
                     if (iswave)
                     {
-                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type waveaudio alias media";
+                        Name = "open \"" + Name + "\" type waveaudio alias media";
 
                     }
                     else
                     {
-                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type MPEGVideo alias media";
+                        Name = "open \"" + Name + "\" type MPEGVideo alias media";
                     }
 
-                    //Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " alias media";
-                    ilong = APIClass.mciSendString("close all", IntPtr.Zero, 0, 0);
+					//Name = "open \"" + Name + "\" alias media";
+					ilong = APIClass.mciSendString("close all", IntPtr.Zero, 0, 0);
                     ilong = APIClass.mciSendString(Name, IntPtr.Zero, 0, 0);
                     ilong = APIClass.mciSendString("set media time format milliseconds", IntPtr.Zero, 0, 0);
                     mc.state = State.mStop;
