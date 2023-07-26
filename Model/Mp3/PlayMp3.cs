@@ -86,8 +86,8 @@ namespace ToastFish.Model.Mp3
         public void play()
         {
             //TemStr = new String('\0', 128);
-			//APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
-			APIClass.mciSendString("play media", IntPtr.Zero, 0, 0);
+            //APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
+            APIClass.mciSendString("play media", IntPtr.Zero, 0, 0);
             mc.state = State.mPlaying;
         }
         //停止

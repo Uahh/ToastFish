@@ -41,6 +41,11 @@ namespace ToastFish
        //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
         public MainWindow()
         {
+            if (!Directory.Exists("Log"))
+            {
+                System.IO.Directory.CreateDirectory("Log");
+            }
+
             Form_Load();
             InitializeComponent();
             DataContext = Vm;

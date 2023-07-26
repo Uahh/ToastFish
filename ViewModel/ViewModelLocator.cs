@@ -14,7 +14,6 @@
 
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
-using System.IO;
 
 namespace ToastFish.ViewModel
 {
@@ -29,11 +28,6 @@ namespace ToastFish.ViewModel
         /// </summary>
         public ViewModelLocator()
         {
-            if (!Directory.Exists("Log"))
-            {
-                System.IO.Directory.CreateDirectory("Log");
-            }
-
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             SimpleIoc.Default.Register<ToastFishModel>();
         }
