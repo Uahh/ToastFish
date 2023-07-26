@@ -21,8 +21,8 @@ namespace ToastFish.Model.Mp3
         private string Name = "";
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         private string durLength = "";
-        [MarshalAs(UnmanagedType.LPTStr, SizeConst = 128)]
-        private string TemStr = "";
+        //[MarshalAs(UnmanagedType.LPTStr, SizeConst = 128)]
+        //private string TemStr = "";
         int ilong;
         //定义播放状态枚举变量
         public enum State
@@ -54,9 +54,7 @@ namespace ToastFish.Model.Mp3
             {
                 try
                 {
-                    TemStr = "";
-                    TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
-                    Name = Name.PadLeft(260, Convert.ToChar(" "));
+                    Name = Name.PadLeft(260, ' ');
                     mc.iName = value;
                     ilong = APIClass.GetShortPathName(mc.iName, Name, Name.Length);
                     Name = GetCurrPath(Name);
@@ -65,18 +63,18 @@ namespace ToastFish.Model.Mp3
                     bool iswave = isFileWave(value);
                     if (iswave)
                     {
-                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type waveaudio alias media";
+                        Name = "open \"" + Name + "\" type waveaudio alias media";
 
                     }
                     else
                     {
-                        Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " type MPEGVideo alias media";
+                        Name = "open \"" + Name + "\" type MPEGVideo alias media";
                     }
 
-                    //Name = "open " + Convert.ToChar(34) + Name + Convert.ToChar(34) + " alias media";
-                    ilong = APIClass.mciSendString("close all", TemStr, TemStr.Length, 0);
-                    ilong = APIClass.mciSendString(Name, TemStr, TemStr.Length, 0);
-                    ilong = APIClass.mciSendString("set media time format milliseconds", TemStr, TemStr.Length, 0);
+					//Name = "open \"" + Name + "\" alias media";
+					ilong = APIClass.mciSendString("close all", IntPtr.Zero, 0, 0);
+                    ilong = APIClass.mciSendString(Name, IntPtr.Zero, 0, 0);
+                    ilong = APIClass.mciSendString("set media time format milliseconds", IntPtr.Zero, 0, 0);
                     mc.state = State.mStop;
                 }
                 catch
@@ -87,26 +85,21 @@ namespace ToastFish.Model.Mp3
         //播放
         public void play()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
-            APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
-            //APIClass.mciSendString("play media", null, 0, 0);
+            //TemStr = new String('\0', 128);
+            //APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
+            APIClass.mciSendString("play media", IntPtr.Zero, 0, 0);
             mc.state = State.mPlaying;
         }
         //停止
         public void StopT()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
-            ilong = APIClass.mciSendString("close media", TemStr, 128, 0);
-            ilong = APIClass.mciSendString("close all", TemStr, 128, 0);
+            ilong = APIClass.mciSendString("close media", IntPtr.Zero, 0, 0);
+            ilong = APIClass.mciSendString("close all", IntPtr.Zero, 0, 0);
             mc.state = State.mStop;
         }
         public void Puase()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
-            ilong = APIClass.mciSendString("pause media", TemStr, TemStr.Length, 0);
+            ilong = APIClass.mciSendString("pause media", IntPtr.Zero, 0, 0);
             mc.state = State.mPuase;
         }
         private string GetCurrPath(string name)
@@ -121,8 +114,7 @@ namespace ToastFish.Model.Mp3
         {
             get
             {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
+                durLength = new String('\0', 128);
                 APIClass.mciSendString("status media length", durLength, durLength.Length, 0);
                 durLength = durLength.Trim();
                 if (durLength == "") return 0;
@@ -134,8 +126,7 @@ namespace ToastFish.Model.Mp3
         {
             get
             {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
+                durLength = new String('\0', 128);
                 APIClass.mciSendString("status media position", durLength, durLength.Length, 0);
                 mc.iPos = (int)(Convert.ToDouble(durLength) / 1000f);
                 return mc.iPos;
@@ -184,16 +175,23 @@ namespace ToastFish.Model.Mp3
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern int GetShortPathName(
-         string lpszLongPath,
-         string shortFile,
-         int cchBuffer
-      );
+            string lpszLongPath,
+            string shortFile,
+            int cchBuffer
+        );
         [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Auto)]
         public static extern int mciSendString(
-           string lpstrCommand,
-           string lpstrReturnString,
-           int uReturnLength,
-           int hwndCallback
-          );
+            string lpstrCommand,
+            string lpstrReturnString,
+            int uReturnLength,
+            int hwndCallback
+        );
+        [DllImport("winmm.dll", EntryPoint = "mciSendString", CharSet = CharSet.Auto)]
+        public static extern int mciSendString(
+            string lpstrCommand,
+            IntPtr lpstrReturnString,
+            int uReturnLength,
+            int hwndCallback
+        );
     }
 }

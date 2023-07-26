@@ -41,6 +41,11 @@ namespace ToastFish
        //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
         public MainWindow()
         {
+            if (!Directory.Exists("Log"))
+            {
+                System.IO.Directory.CreateDirectory("Log");
+            }
+
             Form_Load();
             InitializeComponent();
             DataContext = Vm;
@@ -344,11 +349,6 @@ namespace ToastFish
 
         private void Begin_Click(object sender, EventArgs e)
         {
-            if (!System.IO.Directory.Exists("Log"))  {
-                System.IO.Directory.CreateDirectory("Log");
-            }
-           // System.IO.Directory.CreateDirectory("Log");
-
             var state = thread.ThreadState;
 
             WordType Words = new WordType();
@@ -446,11 +446,6 @@ namespace ToastFish
                 System.Windows.Forms.MessageBox.Show("导入文件出错！");
                 return;
             }
-            
-            if (!Directory.Exists("Log")){
-                System.IO.Directory.CreateDirectory("Log");
-            }
-            
 
             var state = thread.ThreadState;
 
