@@ -54,9 +54,8 @@ namespace ToastFish.Model.Mp3
             {
                 try
                 {
-                    TemStr = "";
-                    TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
-                    Name = Name.PadLeft(260, Convert.ToChar(" "));
+                    TemStr = new String('\0', 127);
+                    Name = Name.PadLeft(260, ' ');
                     mc.iName = value;
                     ilong = APIClass.GetShortPathName(mc.iName, Name, Name.Length);
                     Name = GetCurrPath(Name);
@@ -87,8 +86,7 @@ namespace ToastFish.Model.Mp3
         //播放
         public void play()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(127, Convert.ToChar(" "));
+            TemStr = new String('\0', 127);
             APIClass.mciSendString("play media", TemStr, TemStr.Length, 0);
             //APIClass.mciSendString("play media", null, 0, 0);
             mc.state = State.mPlaying;
@@ -96,16 +94,14 @@ namespace ToastFish.Model.Mp3
         //停止
         public void StopT()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
+            TemStr = new String('\0', 128);
             ilong = APIClass.mciSendString("close media", TemStr, 128, 0);
             ilong = APIClass.mciSendString("close all", TemStr, 128, 0);
             mc.state = State.mStop;
         }
         public void Puase()
         {
-            TemStr = "";
-            TemStr = TemStr.PadLeft(128, Convert.ToChar(" "));
+            TemStr = new String('\0', 128);
             ilong = APIClass.mciSendString("pause media", TemStr, TemStr.Length, 0);
             mc.state = State.mPuase;
         }
@@ -121,8 +117,7 @@ namespace ToastFish.Model.Mp3
         {
             get
             {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
+                durLength = new String('\0', 128);
                 APIClass.mciSendString("status media length", durLength, durLength.Length, 0);
                 durLength = durLength.Trim();
                 if (durLength == "") return 0;
@@ -134,8 +129,7 @@ namespace ToastFish.Model.Mp3
         {
             get
             {
-                durLength = "";
-                durLength = durLength.PadLeft(128, Convert.ToChar(" "));
+                durLength = new String('\0', 128);
                 APIClass.mciSendString("status media position", durLength, durLength.Length, 0);
                 mc.iPos = (int)(Convert.ToDouble(durLength) / 1000f);
                 return mc.iPos;
