@@ -94,7 +94,7 @@ namespace ToastFish.Model.SqliteControl
         public void UpdateCount()
         {
             BookCount Temp = new BookCount();
-            CountList = DataBase.Query<BookCount>($"select * from Count where bookName = {TABLE_NAME}", Temp);
+            CountList = DataBase.Query<BookCount>($"select * from Count where bookName = '{TABLE_NAME}'", Temp);
             var CountArray = CountList.ToArray();
             foreach (var OneCount in CountArray)
             {
