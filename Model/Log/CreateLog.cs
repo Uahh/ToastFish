@@ -72,7 +72,7 @@ namespace ToastFish.Model.Log
             else
             {
                 // 自定义
-                FirstLine = new List<String> { "自定义", "第一行", "第二行", "第三行" };
+                FirstLine = new List<String> { "自定义", "第一行", "第二行", "第三行", "第四行" };
             }
             row = sheet.CreateRow(0);
             for (int i = 0; i < FirstLine.Count; i++)
@@ -96,36 +96,45 @@ namespace ToastFish.Model.Log
             List<Word> WordList = new List<Word>();
             List<JpWord> JpWordList = new List<JpWord>();
             List<CustomizeWord> CustWordList = new List<CustomizeWord>();
-            IWorkbook WorkBook;
+            IWorkbook WorkBook = null;
             try
             {
-                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    // Try to read WorkBook as XLSX:
+                    try
+                    {
+                        WorkBook = new XSSFWorkbook(fs);
+                    }
+                    catch
+                    {
+                        WorkBook = null;
+                    }
 
-                // Try to read WorkBook as XLSX:
-                try
-                {
-                    WorkBook = new XSSFWorkbook(fs);
-                }
-                catch
-                {
-                    WorkBook = null;
-                }
-
-                // If reading fails, try to read WorkBook as XLS:
-                if (WorkBook == null)
-                {
-                    WorkBook = new HSSFWorkbook(fs);
+                    // If reading fails, try to read WorkBook as XLS:
+                    if (WorkBook == null)
+                    {
+                        fs.Position = 0;
+                        WorkBook = new HSSFWorkbook(fs);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Excel read error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return WordList;
+                return null;
             }
 
             ISheet Sheet = WorkBook.GetSheetAt(0);
+            if (Sheet == null)
+            {
+                MessageBox.Show("导入失败，Excel文件没有可读取的工作表");
+                return null;
+            }
+
             IRow FirstRow = Sheet.GetRow(0);
-            if(FirstRow.GetCell(0).ToString() == "英语")
+            string importType = GetCellValue(FirstRow, 0);
+            if(importType == "英语")
             {
                 int RowCount = Sheet.LastRowNum;
                 for (int i = 1; i <= RowCount; i++)
@@ -134,58 +143,69 @@ namespace ToastFish.Model.Log
                     Word TempWord = new Word();
                     if (Row == null)
                         continue;
-                    TempWord.headWord = Row.GetCell(1).ToString();
-                    TempWord.tranCN = Row.GetCell(2).ToString();
-                    TempWord.ukPhone = Row.GetCell(3).ToString();
-                    TempWord.usPhone = Row.GetCell(4).ToString();
-                    TempWord.pos = Row.GetCell(5).ToString();
-                    TempWord.phrase = Row.GetCell(6).ToString();
-                    TempWord.phraseCN = Row.GetCell(7).ToString();
-                    TempWord.sentence = Row.GetCell(8).ToString();
-                    TempWord.sentenceCN = Row.GetCell(9).ToString();
-                    TempWord.question = Row.GetCell(10).ToString();
-                    TempWord.explain = Row.GetCell(11).ToString();
-                    TempWord.choiceIndexOne = Row.GetCell(12).ToString();
-                    TempWord.choiceIndexTwo = Row.GetCell(13).ToString();
-                    TempWord.choiceIndexThree = Row.GetCell(14).ToString();
-                    TempWord.choiceIndexFour = Row.GetCell(15).ToString();
-                    TempWord.rightIndex = Row.GetCell(16).ToString();
+                    TempWord.headWord = GetCellValue(Row, 1);
+                    TempWord.tranCN = GetCellValue(Row, 2);
+                    TempWord.ukPhone = GetCellValue(Row, 3);
+                    TempWord.usPhone = GetCellValue(Row, 4);
+                    TempWord.pos = GetCellValue(Row, 5);
+                    TempWord.phrase = GetCellValue(Row, 6);
+                    TempWord.phraseCN = GetCellValue(Row, 7);
+                    TempWord.sentence = GetCellValue(Row, 8);
+                    TempWord.sentenceCN = GetCellValue(Row, 9);
+                    TempWord.question = GetCellValue(Row, 10);
+                    TempWord.explain = GetCellValue(Row, 11);
+                    TempWord.choiceIndexOne = GetCellValue(Row, 12);
+                    TempWord.choiceIndexTwo = GetCellValue(Row, 13);
+                    TempWord.choiceIndexThree = GetCellValue(Row, 14);
+                    TempWord.choiceIndexFour = GetCellValue(Row, 15);
+                    TempWord.rightIndex = GetCellValue(Row, 16);
+                    if (string.IsNullOrWhiteSpace(TempWord.headWord))
+                        continue;
                     WordList.Add(TempWord);
                 }
                 return WordList;
             }
-            else if (FirstRow.GetCell(0).ToString() == "日语")
+            else if (importType == "日语")
             {
                 int RowCount = Sheet.LastRowNum;
-                for (int i = 1; i < RowCount; i++)
+                for (int i = 1; i <= RowCount; i++)
                 {
                     IRow Row = Sheet.GetRow(i);
                     JpWord TempWord = new JpWord();
                     if (Row == null)
                         continue;
-                    TempWord.headWord = Row.GetCell(1).ToString();
-                    TempWord.tranCN = Row.GetCell(2).ToString();
-                    TempWord.Phone = int.Parse(Row.GetCell(3).ToString());
-                    TempWord.hiragana = Row.GetCell(4).ToString();
-                    TempWord.pos = Row.GetCell(5).ToString();
+                    TempWord.headWord = GetCellValue(Row, 1);
+                    TempWord.tranCN = GetCellValue(Row, 2);
+                    int phone;
+                    TempWord.Phone = int.TryParse(GetCellValue(Row, 3), out phone) ? phone : 0;
+                    TempWord.hiragana = GetCellValue(Row, 4);
+                    TempWord.pos = GetCellValue(Row, 5);
+                    if (string.IsNullOrWhiteSpace(TempWord.headWord))
+                        continue;
                     JpWordList.Add(TempWord);
                 }
                 return JpWordList;
             }
-            else if (FirstRow.GetCell(0).ToString() == "自定义")
+            else if (importType == "自定义")
             {
                 int RowCount = Sheet.LastRowNum;
-                int CellCount = FirstRow.LastCellNum;
-                for (int i = 1; i < RowCount; i++)
+                for (int i = 1; i <= RowCount; i++)
                 {
                     IRow Row = Sheet.GetRow(i);
                     CustomizeWord TempWord = new CustomizeWord();
                     if (Row == null)
                         continue;
-                    TempWord.firstLine = Row.GetCell(1).ToString();
-                    TempWord.secondLine = Row.GetCell(2).ToString();
-                    TempWord.thirdLine = Row.GetCell(3).ToString();
-                    TempWord.fourthLine = Row.GetCell(4).ToString();
+                    TempWord.firstLine = GetCellValue(Row, 1);
+                    TempWord.secondLine = GetCellValue(Row, 2);
+                    TempWord.thirdLine = GetCellValue(Row, 3);
+                    TempWord.fourthLine = GetCellValue(Row, 4);
+                    if (string.IsNullOrWhiteSpace(TempWord.firstLine)
+                        && string.IsNullOrWhiteSpace(TempWord.secondLine)
+                        && string.IsNullOrWhiteSpace(TempWord.thirdLine)
+                        && string.IsNullOrWhiteSpace(TempWord.fourthLine))
+                    {
+                        continue;
+                    }
                     CustWordList.Add(TempWord);
                 }
                 return CustWordList;
@@ -195,6 +215,18 @@ namespace ToastFish.Model.Log
                 MessageBox.Show("导入失败，Excel格式不正确或Excel文件损坏");
                 return null;
             }
+        }
+
+        private string GetCellValue(IRow row, int cellIndex)
+        {
+            if (row == null)
+                return string.Empty;
+
+            ICell cell = row.GetCell(cellIndex);
+            if (cell == null)
+                return string.Empty;
+
+            return cell.ToString().Trim();
         }
     }
 }

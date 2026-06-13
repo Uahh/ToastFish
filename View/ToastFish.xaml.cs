@@ -41,6 +41,7 @@ namespace ToastFish
        //HotKey _hotKey0, _hotKey1, _hotKey2, _hotKey3, _hotKey4;
         public MainWindow()
         {
+            EnsureLogDirectory();
             Form_Load();
             InitializeComponent();
             DataContext = Vm;
@@ -344,10 +345,7 @@ namespace ToastFish
 
         private void Begin_Click(object sender, EventArgs e)
         {
-            if (!System.IO.Directory.Exists("Log"))  {
-                System.IO.Directory.CreateDirectory("Log");
-            }
-           // System.IO.Directory.CreateDirectory("Log");
+            EnsureLogDirectory();
 
             var state = thread.ThreadState;
 
@@ -415,6 +413,11 @@ namespace ToastFish
             WordType Words = new WordType();
             Words.Number = Select.WORD_NUMBER;
             object lstObj = Log.ImportExcel(FileName);
+            if (lstObj == null)
+            {
+                System.Windows.Forms.MessageBox.Show("导入文件出错！");
+                return;
+            }
             string typeObj = lstObj.ToString();
             string typeWord= typeof(List<Word>).ToString();
             string typeJpWord = typeof(List<JpWord>).ToString();
@@ -447,9 +450,7 @@ namespace ToastFish
                 return;
             }
             
-            if (!Directory.Exists("Log")){
-                System.IO.Directory.CreateDirectory("Log");
-            }
+            EnsureLogDirectory();
             
 
             var state = thread.ThreadState;
@@ -712,6 +713,14 @@ namespace ToastFish
             Environment.Exit(0);
         }
 
+        private void EnsureLogDirectory()
+        {
+            if (!Directory.Exists("Log"))
+            {
+                Directory.CreateDirectory("Log");
+            }
+        }
+
         private void Start_Click(object sender, EventArgs e)
         {
             //StartWithWindows.SetMeStart(true);
@@ -722,4 +731,3 @@ namespace ToastFish
         #endregion
     }
 }
-
