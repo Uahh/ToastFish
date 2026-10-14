@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ToastFish 使用说明</title>
+<style>
+  :root { color-scheme: light dark; --fg: #222; --muted: #666; --bg: #fff; --accent: #004cff; --code: #f2f2f2; --line: rgba(0,0,0,.12); }
+  @media (prefers-color-scheme: dark) { :root { --fg: #e8e8e8; --muted: #aaa; --bg: #1e1e1e; --accent: #6ea0ff; --code: #2c2c2c; --line: rgba(255,255,255,.15); } }
+  html { font: 16px/1.7 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif; color: var(--fg); background: var(--bg); }
+  body { max-width: 760px; margin: 0 auto; padding: 2em 16px 6em; }
+  h1 { font-size: 2.2em; margin: .2em 0; }
+  h2 { margin-top: 1.8em; font-size: 1.3em; }
+  p.lead { color: var(--muted); }
+  kbd, code { background: var(--code); border-radius: 4px; padding: 0 .35em; font-family: ui-monospace, Menlo, monospace; font-size: .92em; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: .35em .6em; border-bottom: 1px solid var(--line); vertical-align: top; }
+  a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<h1>ToastFish</h1>
+<p class="lead">在 macOS 通知里背单词。点菜单栏上的小鱼图标打开菜单。</p>
+
+<h2>第一次使用</h2>
+<ol>
+  <li>点 <b>开始！</b>，在弹出的对话框里允许 ToastFish 发送通知。</li>
+  <li>打开 <b>系统设置 → 通知 → ToastFish</b>，把通知样式设为 <b>提醒</b>。横幅样式几秒后就会消失，按钮也会跟着消失。</li>
+  <li>macOS 会把多个按钮收在通知的 <b>选项</b> 里：鼠标移到通知上，点“选项”即可选择。</li>
+</ol>
+
+<h2>基本流程</h2>
+<ol>
+  <li><b>英语词汇</b> 或 <b>日语词汇</b> 里选一本词库，通知会显示当前进度。</li>
+  <li><b>参数设置 → 单词个数</b> 设定这次背多少个。</li>
+  <li>点 <b>开始！</b>（或按 <kbd>⌥Q</kbd>）。英语词库按记忆曲线安排新词和复习词，每个词选“没有印象 / 记忆模糊 / 暂时记住 / 已经牢记”。</li>
+  <li>背完后会测验记忆模糊的词：中译英和选择题，答错的会再考一次。</li>
+</ol>
+
+<h2>快捷键</h2>
+<table>
+  <tr><td><kbd>⌥Q</kbd></td><td>开始背单词</td></tr>
+  <tr><td><kbd>⌥1</kbd> – <kbd>⌥4</kbd></td><td>点通知上的第 1 到第 4 个按钮</td></tr>
+  <tr><td><kbd>⌥`</kbd></td><td>发音</td></tr>
+</table>
+<p>⌥1–⌥4 和 ⌥` 只在背诵或测验进行时生效，其余时间这些按键照常输入字符。⌥Q 在 ToastFish 运行期间一直有效。</p>
+
+<h2>发音</h2>
+<p>英语发音来自有道词典，下载后缓存在本机；没有网络时使用系统语音。<b>参数设置 → 英标类型</b> 可在美音和英音之间切换，<b>自动播放</b> 控制每个词出现时是否自动朗读。日语发音需要系统里有日语声音：<b>系统设置 → 辅助功能 → 朗读内容 → 系统声音 → 管理声音</b>。</p>
+
+<h2>背诵记录与导入</h2>
+<p>开启 <b>自动日志</b> 后，每次用内置词库背诵或测验，都会生成一个 Excel 文件，位置见 <b>参数设置 → 打开背诵记录文件夹</b>。<b>导入单词</b> 可以选择英语和日语的背诵记录重新背诵（五十音记录不能导入），也可以导入按自定义模板填写的 Excel（<b>参数设置 → 显示自定义模板</b>）。仅支持 .xlsx 格式。</p>
+
+<h2>其他</h2>
+<ul>
+  <li><b>重置进度</b>：把当前词库恢复为未学习。</li>
+  <li><b>开机启动</b>：登录时自动打开 ToastFish。</li>
+  <li>学习进度保存在 <code>~/Library/Application Support/ToastFish/</code>，更新应用不会覆盖。</li>
+  <li>问题和建议：<a href="https://github.com/Uahh/ToastFish">github.com/Uahh/ToastFish</a></li>
+</ul>
+</body>
+</html>

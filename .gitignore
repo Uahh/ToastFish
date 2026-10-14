@@ -3,3 +3,4 @@ bin/
 token.txt
 .vs/
 .github/
+.DS_Store
